@@ -1,0 +1,12 @@
+# EXPERIMENT PARAMS
+EPISODES: 5000
+WORLD_SIZE: 10
+POPULATION_SIZE: 10
+
+# RL PARAMS
+LEARNING_RATE: 0.1 # Determines to what extent newly acquired info overrides old q-value
+DISCOUNT_FACTOR: 0 # If 𝛾=0, agent only needs to learn about actions that produce an immediate reward
+EPS_GREEDY: 0 # deterministic, always choose action a with highest q-value
+DEFAULT_CXN_SCORE: 0.5 # default q-value
+REWARD_SUCCESS: 1
+REWARD_FAILURE: -1
