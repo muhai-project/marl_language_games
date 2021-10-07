@@ -1,5 +1,7 @@
 # EXPERIMENT PARAMS
-EPISODES: 5000
+ENV: "bng"
+SERIES: 10
+EPISODES: 10000
 WORLD_SIZE: 10
 POPULATION_SIZE: 10
 
@@ -10,3 +12,4 @@ EPS_GREEDY: 0 # deterministic, always choose action a with highest q-value
 DEFAULT_CXN_SCORE: 0.5 # default q-value
 REWARD_SUCCESS: 1
 REWARD_FAILURE: -1
+EPSILON_FAILURE: 0.01 # margin of REWARD_FAILURE at which a cxn is deleted from the lexicon
