@@ -1,3 +1,4 @@
+from collections import defaultdict
 import numpy as np
 
 from utils import make_id
@@ -11,13 +12,12 @@ class Agent():
         self.id = make_id("AG")
         self.lexicon = Lexicon()
         self.communicative_success = True
-        self.role = None
         self.applied_cxn = None
         self.learning_rate = exp.cfg.LEARNING_RATE
-        self.eps_greedy = exp.cfg.EPS_GREEDY 
-
-    def is_speaker(self):
-        return self.role == SPEAKER
+        self.eps_greedy = exp.cfg.EPS_GREEDY
+        self.reward_success = exp.cfg.REWARD_SUCCESS
+        self.reward_failure = exp.cfg.REWARD_FAILURE
+        self.epsilon_failure = exp.cfg.EPSILON_FAILURE
 
     def epsilon_greedy(self, actions, eps):
         """Approach to balance exploitation vs exploration. If eps = 0, there is no exploration."""
@@ -27,9 +27,9 @@ class Agent():
         else:
             return np.random.choice(actions)
 
-    def policy(self, state):
+    def policy(self, role, state):
         """The given state corresponds to a meaning or form depending on the role of the agent."""
-        if self.is_speaker():
+        if role == SPEAKER:
             return self.produce(state)
         else:
             return self.comprehend(state)
@@ -50,6 +50,7 @@ class Agent():
         actions = self.lexicon.get_cxns_with_form(utterance) # state determines possible actions
         if actions:
             best_action = self.epsilon_greedy(actions, eps=self.eps_greedy) # selection action with highest q_value
+            self.applied_cxn = best_action
             return best_action.meaning
         return None
     
@@ -57,12 +58,36 @@ class Agent():
         """Adopts the association of topic and utterance to the lexicon of the agent."""
         self.lexicon.adopt_cxn(topic, utterance)
     
-    def align(self, reward):
+    def update_q(self, cxn, reward):
+        """Updates the q_value of a state, action pair (a construction). """
+        old_q = cxn.q_val
+        new_q = old_q + self.learning_rate * (reward - old_q) # no discount as it is a bandit
+        cxn.q_val = new_q
+        if cxn.q_val < self.reward_failure + self.epsilon_failure:
+            self.lexicon.remove_cxn(cxn)
+
+    def lateral_inhibition(self):
+        cxns = self.lexicon.get_cxns_with_meaning(self.applied_cxn.meaning)
+        cxns.remove(self.applied_cxn)
+        for cxn in cxns:
+            self.update_q(cxn, self.reward_failure)
+        
+    def align(self):
         """Align the q-table of the agent with the given reward if and only if an action was chosen (applied_cxn)."""
         if self.applied_cxn:
-            old_q = self.applied_cxn.q_val
-            new_q = old_q + self.learning_rate * (reward - old_q) # no discount as it is a bandit
-            self.applied_cxn.q_val = new_q
+            if self.communicative_success:
+                self.update_q(self.applied_cxn, self.reward_success)
+                self.lateral_inhibition()
+            else:
+                self.update_q(self.applied_cxn, self.reward_failure)
+
+    def print_lexicon(self):
+        sorted_by_meaning = defaultdict(list)
+        for item in sorted(self.lexicon.lexicon, key = lambda cxn: cxn.q_val):
+            sorted_by_meaning[item.meaning].append(item)
+        for key in sorted(sorted_by_meaning.keys()):
+            for item in sorted_by_meaning[key]:
+                print(item)
 
     def __str__(self):
-        return f"Agent id: {self.id} - role: {self.role} - lexicon: {self.lexicon}"
+        return f"Agent id: {self.id}"
