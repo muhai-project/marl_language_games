@@ -1,5 +1,4 @@
-from basic_naming_game import BasicNamingGameEnv
-from guessing_game import GuessingGameEnv
+from bng_env import BasicNamingGameEnv
 
 from monitors import Monitors
 

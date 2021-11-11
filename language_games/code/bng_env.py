@@ -1,6 +1,6 @@
 import numpy as np
 
-from agent import Agent, HEARER, SPEAKER
+from bng_agent import Agent, HEARER, SPEAKER
 from environment import Environment
 from utils import make_id
 
