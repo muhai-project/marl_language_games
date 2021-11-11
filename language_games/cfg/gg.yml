@@ -1,0 +1,19 @@
+# EXPERIMENT PARAMS
+ENV: "gg"
+SERIES: 1
+EPISODES: 30000
+WORLD_SIZE: 10
+CONTEXT_MIN_SIZE: 2
+CONTEXT_MAX_SIZE: 5
+POPULATION_SIZE: 10
+AMOUNT_CATEGORIES: 15
+CATEGORIES_PER_OBJECT: 3
+
+# RL PARAMS
+LEARNING_RATE: 0.2 # Determines to what extent newly acquired info overrides old q-value
+DISCOUNT_FACTOR: 0 # If 𝛾=0, agent only needs to learn about actions that produce an immediate reward
+EPS_GREEDY: 0 # deterministic, always choose action a with highest q-value
+DEFAULT_CXN_SCORE: 0 # default q-value
+REWARD_SUCCESS: 1
+REWARD_FAILURE: -1
+EPSILON_FAILURE: 0.1 # margin of REWARD_FAILURE at which a cxn is deleted from the lexicon
