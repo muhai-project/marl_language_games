@@ -23,11 +23,12 @@ class Lexicon():
     
     def adopt_cxn(self, meaning, form):
         new_cxn = Construction(meaning, form)
-        self.lexicon.append(new_cxn)
+        if new_cxn not in self.lexicon:
+            self.lexicon.append(new_cxn)
         return new_cxn
     
-    def get_cxns_with_meaning(self, meaning):
-        filtered = filter(lambda cxn: cxn.meaning == meaning, self.lexicon)
+    def get_cxns_with_meaning(self, meanings):
+        filtered = filter(lambda cxn: cxn.meaning in meanings, self.lexicon)
         return list(filtered)
     
     def get_cxns_with_form(self, form):
