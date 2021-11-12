@@ -62,8 +62,9 @@ class GuessingGameEnv(Environment):
     The environment corresponds to the version of the 'guessing game' problem
     described in Chapter 5 of 'Lexicon Formation in Autonomous Robots' by Loetzsch.
     """
-    def __init__(self, experiment):
-        super().__init__(experiment)
+    def __init__(self, cfg):
+        super().__init__()
+        self.cfg = cfg
         self.world = World(self.cfg.WORLD_SIZE, self.cfg.AMOUNT_CATEGORIES, self.cfg.CATEGORIES_PER_OBJECT)
         self.context, self.topic, self.discriminative_cats = None, None, None
         self.speaker, self.hearer = None, None

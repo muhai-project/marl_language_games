@@ -31,12 +31,12 @@ class BasicNamingGameEnv(Environment):
     described in Chapter 4 in Lexicon Formation in Autonomous Robots by Loetzsch
     
     """
-    def __init__(self, experiment):
-        super().__init__(experiment)
+    def __init__(self, cfg):
+        super().__init__()
+        self.cfg = cfg
         # The environment (world) consists of a set of objects.
         self.world = [make_id("OBJ") for i in range(self.cfg.WORLD_SIZE)]
-        self.population = [Agent(experiment) for i in range(self.cfg.WORLD_SIZE)]
-
+        self.population = [Agent(cfg) for i in range(self.cfg.WORLD_SIZE)]
 
     def reset(self):
         """Resets the basic naming game environment."""

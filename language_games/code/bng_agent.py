@@ -8,16 +8,12 @@ SPEAKER = "SPEAKER"
 HEARER = "HEARER"
 
 class Agent():
-    def __init__(self, exp):
+    def __init__(self, cfg):
+        self.cfg = cfg
         self.id = make_id("AG")
         self.lexicon = Lexicon()
         self.communicative_success = True
         self.applied_cxn = None
-        self.learning_rate = exp.cfg.LEARNING_RATE
-        self.eps_greedy = exp.cfg.EPS_GREEDY
-        self.reward_success = exp.cfg.REWARD_SUCCESS
-        self.reward_failure = exp.cfg.REWARD_FAILURE
-        self.epsilon_failure = exp.cfg.EPSILON_FAILURE
 
     def epsilon_greedy(self, actions, eps): # [RL] - has no conceptual bridge to LG, as there is no exploration in LG
         """Approach to balance exploitation vs exploration. If eps = 0, there is no exploration."""
@@ -39,7 +35,7 @@ class Agent():
         actions = self.lexicon.get_cxns_with_meaning(meaning) # state determines possible actions
         best_action = None
         if actions:
-            best_action = self.epsilon_greedy(actions, eps=self.eps_greedy) # select action with highest q_value
+            best_action = self.epsilon_greedy(actions, eps=self.cfg.EPS_GREEDY) # select action with highest q_value
         else:
             best_action = self.lexicon.invent_cxn(meaning) # invent a new cxn for the meaning
         self.applied_cxn = best_action
@@ -49,7 +45,7 @@ class Agent():
         """Interprets the action of a speaker (an utterance) and chooses a corresponding action."""
         actions = self.lexicon.get_cxns_with_form(utterance) # state determines possible actions
         if actions:
-            best_action = self.epsilon_greedy(actions, eps=self.eps_greedy) # selection action with highest q_value
+            best_action = self.epsilon_greedy(actions, eps=self.cfg.EPS_GREEDY) # selection action with highest q_value
             self.applied_cxn = best_action
             return best_action.meaning
         return None
@@ -61,25 +57,25 @@ class Agent():
     def update_q(self, cxn, reward): # [RL] update score - based on feedback
         """Updates the q_value of a state, action pair (a construction). """
         old_q = cxn.q_val
-        new_q = old_q + self.learning_rate * (reward - old_q) # no discount as it is a bandit
+        new_q = old_q + self.cfg.LEARNING_RATE * (reward - old_q) # no discount as it is a bandit
         cxn.q_val = new_q
-        if cxn.q_val < self.reward_failure + self.epsilon_failure:
+        if cxn.q_val < self.cfg.REWARD_FAILURE + self.cfg.EPSILON_FAILURE:
             self.lexicon.remove_cxn(cxn)
 
     def lateral_inhibition(self): # [LG] no conceptual/terminological bridge at the moment
         cxns = self.lexicon.get_cxns_with_meaning(self.applied_cxn.meaning)
         cxns.remove(self.applied_cxn)
         for cxn in cxns:
-            self.update_q(cxn, self.reward_failure)
+            self.update_q(cxn, self.cfg.REWARD_FAILURE)
         
     def align(self): # [LG] - value iteration, mechanism by which optimal policy and values are computed
         """Align the q-table of the agent with the given reward if and only if an action was chosen (applied_cxn)."""
         if self.applied_cxn: # required to deal with not punishing adoption immediately
             if self.communicative_success:
-                self.update_q(self.applied_cxn, self.reward_success)
+                self.update_q(self.applied_cxn, self.cfg.REWARD_SUCCESS)
                 self.lateral_inhibition()
             else:
-                self.update_q(self.applied_cxn, self.reward_failure)
+                self.update_q(self.applied_cxn, self.cfg.REWARD_FAILURE)
 
     def print_lexicon(self):
         sorted_by_meaning = defaultdict(list)

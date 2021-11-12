@@ -9,12 +9,12 @@ class Experiment():
         self.monitors = Monitors(self)
 
     def initialize(self):
-        self.reward = 0
+        self.reward = 0 # TODO reward here doesn't fit, its cumulated comm. success, but interactions are local so no cumulated shared reward
         self.timesteps = 0
-        self.env = self.select_env()
+        self.env = self.select_env(self.cfg)
         
     def run_experiment(self):
-        for serie in range(self.cfg.SERIES):
+        for serie in range(self.cfg.SERIES): # [LG] - RL literature doesn't do multiple series as it is deemed too expensive
             self.initialize()
             for i in range(0, self.cfg.EPISODES): # [RL] - episode = a single interaction
                 print(f"\n\n - Episode {i} - reward: {self.reward}")   
@@ -34,11 +34,11 @@ class Experiment():
         # record timesteps
         self.timesteps += 1
 
-    def select_env(self):
+    def select_env(self, cfg):
         if self.cfg.ENV == "bng":
-            return BasicNamingGameEnv(self)
+            return BasicNamingGameEnv(cfg)
         elif self.cfg.ENV == "gg":
-            return GuessingGameEnv(self)
+            return GuessingGameEnv(cfg)
         else:
             raise Exception(f"Given environment {self.cfg.ENV} is not valid!")
 
