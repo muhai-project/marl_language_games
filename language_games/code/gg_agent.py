@@ -23,7 +23,7 @@ class Agent():
         self.reward_failure = cfg.REWARD_FAILURE
         self.epsilon_failure = cfg.EPSILON_FAILURE
 
-    def epsilon_greedy(self, actions, eps):
+    def epsilon_greedy(self, actions, eps): # [RL] - has no conceptual bridge to LG, as there is no exploration in LG
         """Approach to balance exploitation vs exploration. If eps = 0, there is no exploration."""
         p = np.random.random()
         if p < (1 - eps): 
@@ -41,48 +41,50 @@ class Agent():
         """
         return np.random.choice(meanings)
 
-    def policy(self, role, state):
+    def find_in_context(self, actions):
+        """Returns a subset of the given actions that is consistent with the current context."""
+        context_actions = [] # [LG] - (~ action mask) all actions that are consistent with the current context
+        for obj in self.context:
+            categories = self.world.get_categories(obj)
+            possible_objects = list(filter(lambda cxn: cxn.meaning in categories, actions))
+            if len(possible_objects) == 1:
+                choice = (possible_objects[0], obj) # corresponds to a path as Loetzsch describes [form -> category -> obj]
+                context_actions.append(choice)
+        return context_actions
+
+    def policy(self, role, state): # [RL] - language processing is now a policy which depends on the role of the agent
         """The given state corresponds to a meaning or form depending on the role of the agent."""
         if role == SPEAKER:
             return self.produce(state)
         else:
             return self.comprehend(state)
     
-    def produce(self, meanings):
+    def produce(self, meanings): # [LG] - action selection in one direction
         """Finds or invents an action (a cxn) for the given meaning."""
         actions = self.lexicon.get_cxns_with_meaning(meanings) # state determines possible actions
         best_action = None
         if actions:
-            best_action = self.epsilon_greedy(actions, eps=self.eps_greedy) # select action with highest q_value
+            best_action = self.epsilon_greedy(actions, eps=self.eps_greedy) # [RL] - select action with highest q_value
         else:
-            meaning = self.invention_strategy(meanings)
-            best_action = self.lexicon.invent_cxn(meaning) # invent a new cxn for the meaning
+            meaning = self.invention_strategy(meanings) # [LG] - if no entry (action) is found for the given states in the current q-table, then create a new entry for one of the states. 
+            best_action = self.lexicon.invent_cxn(meaning) # [LG] - add a new entry in the q-table
         self.applied_cxn = best_action
         return best_action.form
 
-    def comprehend(self, utterance):
+    def comprehend(self, utterance): # [LG] - action selection in other direction
         """Interprets the action of a speaker (an utterance) and chooses a corresponding action."""
         # parse
         self.parsed_lexs = self.lexicon.get_cxns_with_form(utterance) # state determines possible actions
         # interpret
-        actions = self.find_in_context(self.parsed_lexs)
-        if actions:
-            best_action = max(actions, key=lambda cxn: cxn[0].q_val)
+        actions = self.find_in_context(self.parsed_lexs) # [LG] - action masking based on the the context 
+        if actions: # [RL] - ACTION SELECTION - maximize q-val of the remanining unmasked actions
+            best_action = max(actions, key=lambda path: path[0].q_val) # note: given actions are (cxn - topic) tuples, hence path[0].q_val, TODO readability
             self.applied_cxn = best_action[0]
             self.topic = best_action[1]
         return self.parsed_lexs
 
-    def find_in_context(self, actions):
-        context_actions = []
-        for obj in self.context:
-            categories = self.world.get_categories(obj)
-            possible_objects = list(filter(lambda cxn: cxn.meaning in categories, actions))
-            if len(possible_objects) == 1:
-                choice = (possible_objects[0], obj)
-                context_actions.append(choice)
-        return context_actions
-
     def other_paths(self, topic):
+        """Find an alternative action that leads to the given topic"""
         for obj in self.context:
             categories = self.world.get_categories(obj)
             possible_objects = list(filter(lambda cxn: cxn.meaning in categories, self.parsed_lexs))
@@ -90,12 +92,12 @@ class Agent():
                 return possible_objects[0]
         return False
         
-    def reconceptualize_and_adopt(self, meaning, form):
-        discr_cats = self.world.conceptualize(meaning, self.context)
+    def reconceptualize_and_adopt(self, topic, form):
+        discr_cats = self.world.conceptualize(topic, self.context)
         for other_meaning in discr_cats:
-            self.lexicon.adopt_cxn(other_meaning, form)
+            self.lexicon.adopt_cxn(other_meaning, form) # will not introduce duplicates
 
-    def adopt(self, meaning, form):
+    def adopt(self, meaning, form):  # [LG] - adding a new state/action to the state/action space
         """Adopts the association of meaning and form to the lexicon of the agent."""
         other_path = self.other_paths(meaning)
         if self.applied_cxn is None or not other_path:
@@ -103,8 +105,8 @@ class Agent():
         elif other_path: # there was an another path
             self.correct_path = other_path
 
-    def update_q(self, cxn, reward):
-        """Updates the q_value of a state, action pair (a construction). """
+    def update_q(self, cxn, reward):  # [RL] update score - based on feedback
+        """Updates the q_value of a state, action pair (a construction)."""
         old_q = cxn.q_val
         new_q = old_q + self.learning_rate * (reward - old_q) # no discount as it is a bandit
         cxn.q_val = new_q
@@ -114,7 +116,7 @@ class Agent():
         if cxn.q_val < self.reward_failure + self.epsilon_failure:
             self.lexicon.remove_cxn(cxn)
 
-    def lateral_inhibition(self, primary_cxn):
+    def lateral_inhibition(self, primary_cxn): # [LG] no conceptual/terminological bridge at the moment
         cxns = self.lexicon.get_cxns_with_meaning(primary_cxn.meaning)
         cxns.remove(primary_cxn)
         for cxn in cxns:
@@ -123,7 +125,8 @@ class Agent():
     def align(self):
         """Align the q-table of the agent with the given reward if and only if an action was chosen (applied_cxn).
         
-        applied_cxn: check if the action was not added in the interaction (invention/adoption).
+        applied_cxn: 
+            check if the action was not added during the interaction (invention/adoption).
         correct_path: another path to the topic is found
             If true, this action (cxn) is treated specially in consolidation, i.e. treated as if it was succesful.
         """

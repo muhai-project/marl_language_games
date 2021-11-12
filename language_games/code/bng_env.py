@@ -53,14 +53,14 @@ class BasicNamingGameEnv(Environment):
     def step(self):
         """Interaction script of the basic naming game"""
         # arm selection
-        utterance = self.speaker.policy(SPEAKER, self.topic) # speaker chooses arm ifo topic
-        interpretation = self.hearer.policy(HEARER, utterance) # hearer chooses arm ifo utterance
+        utterance = self.speaker.policy(SPEAKER, self.topic) # [RL] - speaker chooses arm (construction) ifo topic
+        interpretation = self.hearer.policy(HEARER, utterance) # [RL] - hearer chooses arm (construction) ifo utterance
         
         # evaluate pulls
         print(f" === {self.speaker.id} uttered {utterance}")
         print(f" === {self.hearer.id} interpreted {interpretation}")
         if interpretation == None or interpretation != self.topic:
-            self.hearer.adopt(self.topic, utterance) # adopt arm
+            self.hearer.adopt(self.topic, utterance) # [LG] - adoption of the unseen state/action pair
             self.speaker.communicative_success = False
             self.hearer.communicative_success = False
             print(f" ===> FAILURE, hence adopting {utterance} <===")
@@ -68,5 +68,5 @@ class BasicNamingGameEnv(Environment):
             print(f" ===> SUCCESS <===")
         
         # learn based on outcome
-        self.speaker.align()
-        self.hearer.align()
+        self.speaker.align() # [LG] - value iteration
+        self.hearer.align() # [LG] - value iteration

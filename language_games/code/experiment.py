@@ -14,13 +14,12 @@ class Experiment():
         self.env = self.select_env()
         
     def run_experiment(self):
-        # self.env.two_dialect_setting(self)
         for serie in range(self.cfg.SERIES):
             self.initialize()
-            for i in range(0, self.cfg.EPISODES): # episode = a single interaction
+            for i in range(0, self.cfg.EPISODES): # [RL] - episode = a single interaction
                 print(f"\n\n - Episode {i} - reward: {self.reward}")   
-                self.env.reset() # corresponds to :before interaction, i.e. pick context, topic and reset slots
-                self.env.step() # single step episode (bandit)
+                self.env.reset() # [RL] - corresponds to :before interaction, i.e. pick context, topic and reset slots
+                self.env.step() # [RL] - single step episode (bandit)
                 self.record_events(serie) # monitors
             self.print_debug()
 
