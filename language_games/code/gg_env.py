@@ -8,6 +8,7 @@ from utils import make_id
 
 
 class World():
+    """Abstraction class of the part of the environment which handles the object-category mappings."""
     def __init__(self, world_size, amount_cats, cats_per_obj):
         """Initializes a world of objects represented by a set of categories."""
         self.cats = [make_id("C") for i in range(amount_cats)]
@@ -17,9 +18,14 @@ class World():
         self.objects = list(self.objs.keys())
 
     def pick_topic(self, context):
+        """Given a list of objects (context) returns at random one of the objects as the topic."""
         return np.random.choice(context)
 
     def pick_context(self, context_min_size, context_max_size):
+        """Given a world chooses a subset of the world of objects as the context.
+        
+        The size of the context is sampled uniformly at run-time using the given parameters context_min/max_size.
+        """
         context_size = np.random.randint(context_min_size, context_max_size+1)
         return np.random.choice(self.objects, size=context_size, replace=False)
 
@@ -27,6 +33,7 @@ class World():
         return self.objs[obj]
 
     def conceptualize(self, topic, context):
+        """Returns the set of categories of the topic that is discriminating relative to the the context."""
         other_objects = [obj for obj in context if obj != topic]
         discr_cats = set(self.objs[topic])
         for obj in sorted(list(other_objects)):

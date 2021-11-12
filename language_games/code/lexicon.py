@@ -13,6 +13,7 @@ class Construction():
         return f"Construction: ({self.meaning} - {self.form}) -> {self.q_val}"
         
 class Lexicon():
+    """Naive implementation of a lexicon as a list of constructions."""
     def __init__(self):
         self.lexicon = []
         
@@ -23,7 +24,7 @@ class Lexicon():
     
     def adopt_cxn(self, meaning, form):
         new_cxn = Construction(meaning, form)
-        if new_cxn not in self.lexicon:
+        if new_cxn not in self.lexicon: # uses Construction __eq__ to determine if member 
             self.lexicon.append(new_cxn)
         return new_cxn
     

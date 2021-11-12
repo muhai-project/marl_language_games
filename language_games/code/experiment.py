@@ -17,11 +17,11 @@ class Experiment():
         # self.env.two_dialect_setting(self)
         for serie in range(self.cfg.SERIES):
             self.initialize()
-            for i in range(0, self.cfg.EPISODES):
+            for i in range(0, self.cfg.EPISODES): # episode = a single interaction
                 print(f"\n\n - Episode {i} - reward: {self.reward}")   
-                self.env.reset()
-                self.env.step()
-                self.record_events(serie)
+                self.env.reset() # corresponds to :before interaction, i.e. pick context, topic and reset slots
+                self.env.step() # single step episode (bandit)
+                self.record_events(serie) # monitors
             self.print_debug()
 
     def record_events(self, serie):
@@ -34,7 +34,6 @@ class Experiment():
         self.reward += self.cfg.REWARD_SUCCESS if self.env.speaker.communicative_success else self.cfg.REWARD_FAILURE
         # record timesteps
         self.timesteps += 1
-
 
     def select_env(self):
         if self.cfg.ENV == "bng":
