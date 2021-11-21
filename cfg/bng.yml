@@ -1,7 +1,7 @@
 # EXPERIMENT PARAMS
 ENV: "bng"
-SERIES: 10
-EPISODES: 10000
+SERIES: 2
+EPISODES: 10000 # TODO episode = start to terminal state
 WORLD_SIZE: 10
 POPULATION_SIZE: 10
 
@@ -9,7 +9,7 @@ POPULATION_SIZE: 10
 LEARNING_RATE: 0.1 # Determines to what extent newly acquired info overrides old q-value
 DISCOUNT_FACTOR: 0 # If 𝛾=0, agent only needs to learn about actions that produce an immediate reward
 EPS_GREEDY: 0 # deterministic, always choose action a with highest q-value
-DEFAULT_CXN_SCORE: 0 # default q-value
+INITIAL_Q_VAL: 0 # default q-value
 REWARD_SUCCESS: 1
 REWARD_FAILURE: -1
 EPSILON_FAILURE: 0.01 # margin of REWARD_FAILURE at which a cxn is deleted from the lexicon

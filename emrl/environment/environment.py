@@ -1,5 +1,6 @@
-class Environment():
+class Environment:
     """Base class for language game environments."""
+
     def __init__(self):
         self.world = None
         self.context = None
