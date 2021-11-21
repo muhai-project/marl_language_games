@@ -1,9 +1,6 @@
 # User-specific
-.DS_Store
 data/
 notebooks/
-.vscode/
-notes/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -82,6 +79,9 @@ docs/_build/
 .pybuilder/
 target/
 
+# VS Code
+.vscode/
+
 # Jupyter Notebook
 .ipynb_checkpoints
 
@@ -143,3 +143,6 @@ dmypy.json
 
 # Cython debug symbols
 cython_debug/
+
+# Mac OS-specific storage files
+.DS_Store
