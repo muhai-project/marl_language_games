@@ -2,6 +2,7 @@ import random
 from collections import defaultdict
 
 import numpy as np
+from prettytable import PrettyTable
 
 from emrl.environment.environment import Environment
 from emrl.environment.gg.gg_agent import HEARER, SPEAKER, Agent
@@ -41,6 +42,41 @@ class World:
         for obj in sorted(list(other_objects)):
             discr_cats -= set(self.objs[obj])
         return list(discr_cats)
+
+    def print_contextualization(self, topic, context):
+        tbl = PrettyTable()
+
+        context.sort()
+        context = sorted(context, key=len)
+        sorted_context = {k: v for v, k in enumerate(context)}
+
+        cats_dict = defaultdict(list)
+        for obj in context:
+            for cat in self.objs[obj]:
+                cats_dict[cat].append(obj)
+
+        rows = []
+        for cat in self.cats:
+            row = [""] * len(context)
+            add_row = False
+            for obj in context:
+                if obj in cats_dict[cat]:
+                    idx = sorted_context[obj]
+                    row[idx] = "x"
+                    add_row = True
+            if add_row:
+                row.insert(0, cat)
+                rows.append(row)
+
+        context.insert(0, "m/o")
+        for idx, obj in enumerate(context, 0):
+            if obj == topic:
+                context[idx] = f"-> {obj} <-"
+        tbl.field_names = context
+        for row in rows:
+            tbl.add_row(row)
+
+        print(tbl)
 
 
 class GuessingGameEnv(Environment):
@@ -107,6 +143,7 @@ class GuessingGameEnv(Environment):
             print(f"  ~~ GAME BETWEEN: {self.speaker.id} - {self.hearer.id} ~~")
             print(f"  ~~ CONTEXT: {sorted(self.context)} ~~")
             print(f"  ~~ TOPIC: {self.topic} ~~")
+            self.world.print_contextualization(self.topic, self.context)
             print(
                 f"  ~~ DISCRIMINATING CATEGORIES: {sorted(self.discriminative_cats, key=len)} ~~"
             )
