@@ -1,5 +1,3 @@
-from collections import defaultdict
-
 import numpy as np
 
 from emrl.environment.lexicon import Lexicon
@@ -95,12 +93,7 @@ class Agent:
                 self.update_q(self.applied_cxn, self.cfg.REWARD_FAILURE)
 
     def print_lexicon(self):
-        sorted_by_meaning = defaultdict(list)
-        for item in sorted(self.lexicon.q_table, key=lambda cxn: cxn.q_val):
-            sorted_by_meaning[item.meaning].append(item)
-        for key in sorted(sorted_by_meaning.keys()):
-            for item in sorted_by_meaning[key]:
-                print(item)
+        print(self.lexicon)
 
     def __str__(self):
         return f"Agent id: {self.id}"

@@ -1,5 +1,3 @@
-from collections import defaultdict
-
 import numpy as np
 
 from emrl.environment.lexicon import Lexicon
@@ -47,19 +45,19 @@ class Agent:
 
     def find_in_context(self, actions):
         """Returns a subset of the given actions that is consistent with the current context."""
-        context_actions = (
-            []
-        )  # [LG] - (~ action mask) all actions that are consistent with the current context
+        # [LG] - (~ action mask) all actions that are consistent with the current context
+        context_actions = []
         for obj in self.context:
             categories = self.world.get_categories(obj)
             possible_objects = list(
                 filter(lambda cxn: cxn.meaning in categories, actions)
             )
             if len(possible_objects) == 1:
+                # corresponds to a path as Loetzsch describes [form -> category -> obj]
                 choice = (
                     possible_objects[0],
                     obj,
-                )  # corresponds to a path as Loetzsch describes [form -> category -> obj]
+                )
                 context_actions.append(choice)
         return context_actions
 
@@ -74,9 +72,8 @@ class Agent:
 
     def produce(self, meanings):  # [LG] - action selection in one direction
         """Finds or invents an action (a cxn) for the given meaning."""
-        actions = self.lexicon.get_cxns_with_meaning(
-            meanings
-        )  # state determines possible actions
+        # state determines possible actions
+        actions = self.lexicon.get_cxns_with_meaning(meanings)
         best_action = None
         if actions:
             # [RL] - select action with highest q_value
@@ -120,10 +117,9 @@ class Agent:
         for other_meaning in discr_cats:
             self.lexicon.adopt_cxn(other_meaning, form)  # will not introduce duplicates
 
-    def adopt(
-        self, meaning, form
-    ):  # [LG] - adding a new state/action to the state/action space
+    def adopt(self, meaning, form):
         """Adopts the association of meaning and form to the lexicon of the agent."""
+        # [LG] - adding a new state/action to the state/action space
         other_path = self.other_paths(meaning)
         if self.applied_cxn is None or not other_path:
             self.reconceptualize_and_adopt(meaning, form)
@@ -143,9 +139,8 @@ class Agent:
         if cxn.q_val < self.reward_failure + self.epsilon_failure:
             self.lexicon.remove_cxn(cxn)
 
-    def lateral_inhibition(
-        self, primary_cxn
-    ):  # [LG] no conceptual/terminological bridge at the moment
+    def lateral_inhibition(self, primary_cxn):
+        # [LG] no conceptual/terminological bridge at the moment
         cxns = self.lexicon.get_cxns_with_meaning(primary_cxn.meaning)
         cxns.remove(primary_cxn)
         for cxn in cxns:
@@ -170,12 +165,7 @@ class Agent:
                 self.update_q(self.applied_cxn, self.reward_failure)
 
     def print_lexicon(self):
-        sorted_by_meaning = defaultdict(list)
-        for item in sorted(self.lexicon.q_table, key=lambda cxn: cxn.q_val):
-            sorted_by_meaning[item.meaning].append(item)
-        for key in sorted(sorted_by_meaning.keys()):
-            for item in sorted_by_meaning[key]:
-                print(item)
+        print(self.lexicon)
 
     def __str__(self):
         return f"Agent id: {self.id}"

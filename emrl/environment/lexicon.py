@@ -1,3 +1,7 @@
+from collections import defaultdict
+
+from prettytable import PrettyTable
+
 from emrl.utils.invention import invent
 
 
@@ -49,6 +53,33 @@ class Lexicon:
         return len(self.q_table)
 
     def __repr__(self):
-        table = ""
-        return table
-        # return f"{self.q_table}"
+        tbl = PrettyTable()
+
+        forms = sorted(list(set([cxn.form for cxn in self.q_table])))
+        forms = {k: v for v, k in enumerate(forms)}
+
+        meanings = defaultdict(list)
+        for cxn in self.q_table:
+            meanings[cxn.meaning].append(cxn)
+
+        rows = []
+        meaning_keys = list(meanings.keys())
+        meaning_keys.sort()
+        meaning_keys = sorted(meaning_keys, key=len)
+        for meaning in meaning_keys:
+            cxns = meanings[meaning]
+            row = [""] * len(forms)
+            for cxn in cxns:
+                idx = forms[cxn.form]
+                row[idx] = round(cxn.q_val, 3)
+            row.insert(0, meaning)
+            rows.append(row)
+
+        forms = list(forms.keys())
+        forms.insert(0, "m/f")
+
+        tbl.field_names = forms
+        for row in rows:
+            tbl.add_row(row)
+
+        return str(tbl)
