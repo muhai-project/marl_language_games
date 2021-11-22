@@ -1,5 +1,6 @@
 from emrl.experiment.experiment import Experiment
 from emrl.utils.log import log_experiment
+from emrl.utils.utils import cfg_from_file, parse_args
 
 if __name__ == "__main__":
     args = parse_args()
