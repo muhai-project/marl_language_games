@@ -80,7 +80,7 @@ class GuessingGameEnv(Environment):
             Agent(self.cfg, self.world) for i in range(self.cfg.POPULATION_SIZE)
         ]
 
-    def reset(self):
+    def reset(self, debug=False):
         """Resets the guessing game environment."""
         # choose interacting agents
         self.speaker, self.hearer = np.random.choice(
@@ -92,22 +92,26 @@ class GuessingGameEnv(Environment):
         )
         self.topic = self.world.pick_topic(self.context)
         self.discriminative_cats = self.world.conceptualize(self.topic, self.context)
+        self.discriminative_cats.sort()  # for visualization
 
         # reset agent
         self.speaker.context, self.hearer.context = self.context, self.context
         self.speaker.applied_cxn, self.hearer.applied_cxn = None, None
-        self.speaker.correct_path, self.hearer.correct_path = None, None
         self.speaker.parsed_lexs, self.hearer.parsed_lexs = None, None
         self.speaker.topic, self.hearer.topic = self.topic, None
         self.speaker.communicative_success, self.hearer.communicative_success = (
             True,
             True,
         )
-        self.correct_path = False
-        print(f"  ~~ GAME BETWEEN: {self.speaker.id} - {self.hearer.id} ~~")
-        print(f"  ~~ TOPIC: {self.topic}, {self.discriminative_cats} ~~")
+        if debug:
+            print(f"  ~~ GAME BETWEEN: {self.speaker.id} - {self.hearer.id} ~~")
+            print(f"  ~~ CONTEXT: {sorted(self.context)} ~~")
+            print(f"  ~~ TOPIC: {self.topic} ~~")
+            print(
+                f"  ~~ DISCRIMINATING CATEGORIES: {sorted(self.discriminative_cats, key=len)} ~~"
+            )
 
-    def step(self):
+    def step(self, debug=False):
         """Interaction script of the guessing game"""
         if self.discriminative_cats:
             # arm selection
@@ -116,9 +120,15 @@ class GuessingGameEnv(Environment):
             # hearer chooses arm ifo utterance
             interpretations = self.hearer.policy(HEARER, utterance)
 
+            if debug:
+                print(f" === {self.speaker.id} q-table:")
+                self.speaker.print_lexicon()
+                print(f" === {self.speaker.id} uttered {utterance}")
+                print(f" === {self.hearer.id} q-table:")
+                self.hearer.print_lexicon()
+                print(f" === {self.hearer.id} interpreted {self.hearer.topic}")
+
             # evaluate pulls
-            print(f" === {self.speaker.id} uttered {utterance}")
-            print(f" === {self.hearer.id} interpreted {self.hearer.topic}")
             if (
                 interpretations is None
                 or self.hearer.applied_cxn is None

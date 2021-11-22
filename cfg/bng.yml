@@ -1,7 +1,7 @@
 # EXPERIMENT PARAMS
 ENV: "bng"
-SERIES: 2
-EPISODES: 10000 # TODO episode = start to terminal state
+SERIES: 10
+EPISODES: 20000
 WORLD_SIZE: 10
 POPULATION_SIZE: 10
 
@@ -13,3 +13,6 @@ INITIAL_Q_VAL: 0 # default q-value
 REWARD_SUCCESS: 1
 REWARD_FAILURE: -1
 EPSILON_FAILURE: 0.01 # margin of REWARD_FAILURE at which a cxn is deleted from the lexicon
+
+# DEBUGGING
+PRINT_EVERY: 100

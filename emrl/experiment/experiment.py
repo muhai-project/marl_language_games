@@ -23,8 +23,15 @@ class Experiment:
             # [RL] - episode = a single interaction
             for i in range(0, self.cfg.EPISODES):
                 print(f"\n\n - Episode {i} - reward: {self.reward}")
-                self.env.reset()  # [RL] - corresponds to :before interaction, i.e. pick context, topic and reset slots
-                self.env.step()  # [RL] - single step episode (bandit)
+                debug = (
+                    True
+                    if self.cfg.PRINT_EVERY and i % self.cfg.PRINT_EVERY == 0
+                    else False
+                )
+                self.env.reset(
+                    debug
+                )  # [RL] - corresponds to :before interaction, i.e. pick context, topic and reset slots
+                self.env.step(debug)  # [RL] - single step episode (bandit)
                 self.record_events(serie)  # monitors
             self.print_debug()
 

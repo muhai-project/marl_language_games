@@ -40,10 +40,9 @@ class BasicNamingGameEnv(Environment):
         self.world = [make_id("OBJ") for i in range(self.cfg.WORLD_SIZE)]
         self.population = [Agent(cfg) for i in range(self.cfg.WORLD_SIZE)]
 
-    def reset(self):
+    def reset(self, debug=False):
         """Resets the basic naming game environment."""
         self.topic = np.random.choice(self.world)
-        print(f" === topic: {self.topic}")
         # choose interacting agents
         self.speaker, self.hearer = np.random.choice(
             self.population, size=2, replace=False
@@ -55,23 +54,30 @@ class BasicNamingGameEnv(Environment):
             True,
         )
 
-    def step(self):
+        if debug:
+            print(f"  ~~ GAME BETWEEN: {self.speaker.id} - {self.hearer.id} ~~")
+            print(f"  ~~ TOPIC: {self.topic} ~~")
+
+    def step(self, debug=False):
         """Interaction script of the basic naming game"""
         # arm selection
-        utterance = self.speaker.policy(
-            SPEAKER, self.topic
-        )  # [RL] - speaker chooses arm (construction) ifo topic
-        interpretation = self.hearer.policy(
-            HEARER, utterance
-        )  # [RL] - hearer chooses arm (construction) ifo utterance
+        # [RL] - speaker chooses arm (construction) ifo topic
+        utterance = self.speaker.policy(SPEAKER, self.topic)
+        # [RL] - hearer chooses arm (construction) ifo utterance
+        interpretation = self.hearer.policy(HEARER, utterance)
+
+        if debug:
+            print(f" === {self.speaker.id} q-table:")
+            self.speaker.print_lexicon()
+            print(f" === {self.speaker.id} uttered {utterance}")
+            print(f" === {self.hearer.id} q-table:")
+            self.hearer.print_lexicon()
+            print(f" === {self.hearer.id} interpreted {interpretation}")
 
         # evaluate pulls
-        print(f" === {self.speaker.id} uttered {utterance}")
-        print(f" === {self.hearer.id} interpreted {interpretation}")
         if interpretation is None or interpretation != self.topic:
-            self.hearer.adopt(
-                self.topic, utterance
-            )  # [LG] - adoption of the unseen state/action pair
+            # [LG] - adoption of the unseen state/action pair
+            self.hearer.adopt(self.topic, utterance)
             self.speaker.communicative_success = False
             self.hearer.communicative_success = False
             print(f" ===> FAILURE, hence adopting {utterance} <===")
