@@ -28,29 +28,29 @@ class Lexicon:
         self.cfg = cfg
         self.q_table = []  # [LG] - the set of state/action pairs, i.e. the q-table
 
-    def invent_cxn(self, meaning):  # [LG] - adding a state/action pair
-        new_cxn = Construction(meaning, invent(), self.cfg.INITIAL_Q_VAL)
-        self.q_table.append(new_cxn)
-        return new_cxn
+    def invent_sa_pair(self, meaning):  # [LG] - adding a state/action pair
+        new_sa_pair = Construction(meaning, invent(), self.cfg.INITIAL_Q_VAL)
+        self.q_table.append(new_sa_pair)
+        return new_sa_pair
 
-    def adopt_cxn(self, meaning, form):  # [LG] - adding a state/action pair
-        new_cxn = Construction(meaning, form, self.cfg.INITIAL_Q_VAL)
+    def adopt_sa_pair(self, meaning, form):  # [LG] - adding a state/action pair
+        new_sa_pair = Construction(meaning, form, self.cfg.INITIAL_Q_VAL)
         # uses Construction __eq__ to determine if member
-        if new_cxn not in self.q_table:
-            self.q_table.append(new_cxn)
-        return new_cxn
+        if new_sa_pair not in self.q_table:
+            self.q_table.append(new_sa_pair)
+        return new_sa_pair
 
-    def get_cxns_with_meaning(self, meanings):
+    def get_actions_produce(self, meanings):
         # [LG] - retrieving all actions given a state
-        filtered = filter(lambda cxn: cxn.meaning in meanings, self.q_table)
+        filtered = filter(lambda sa_pair: sa_pair.meaning in meanings, self.q_table)
         return list(filtered)
 
-    def get_cxns_with_form(self, form):  # [LG] - retrieving all actions given a state
-        filtered = filter(lambda cxn: cxn.form == form, self.q_table)
+    def get_actions_comprehend(self, form):
+        filtered = filter(lambda sa_pair: sa_pair.form == form, self.q_table)
         return list(filtered)
 
-    def remove_cxn(self, cxn):  # [LG] - removing a state/action pair
-        self.q_table.remove(cxn)
+    def remove_sa_pair(self, sa_pair):
+        self.q_table.remove(sa_pair)
 
     def __len__(self):
         return len(self.q_table)

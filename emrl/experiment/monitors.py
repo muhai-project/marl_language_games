@@ -101,8 +101,8 @@ class Monitors:
         avgs = []
         for agent in self.exp.env.population:
             meanings = defaultdict(int)
-            for cxn in agent.lexicon.q_table:
-                meanings[cxn.meaning] += 1
+            for sa_pair in agent.lexicon.q_table:
+                meanings[sa_pair.meaning] += 1
 
             counts = list(meanings.values())
             if counts:

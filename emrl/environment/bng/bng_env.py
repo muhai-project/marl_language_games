@@ -48,7 +48,7 @@ class BasicNamingGameEnv(Environment):
             self.population, size=2, replace=False
         )
         # reset agent
-        self.speaker.applied_cxn, self.hearer.applied_cxn = None, None
+        self.speaker.applied_sa_pair, self.hearer.applied_sa_pair = None, None
         self.speaker.communicative_success, self.hearer.communicative_success = (
             True,
             True,

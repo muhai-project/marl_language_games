@@ -132,7 +132,7 @@ class GuessingGameEnv(Environment):
 
         # reset agent
         self.speaker.context, self.hearer.context = self.context, self.context
-        self.speaker.applied_cxn, self.hearer.applied_cxn = None, None
+        self.speaker.applied_sa_pair, self.hearer.applied_sa_pair = None, None
         self.speaker.parsed_lexs, self.hearer.parsed_lexs = None, None
         self.speaker.topic, self.hearer.topic = self.topic, None
         self.speaker.communicative_success, self.hearer.communicative_success = (
@@ -171,7 +171,7 @@ class GuessingGameEnv(Environment):
             # evaluate pulls
             if (
                 interpretations is None
-                or self.hearer.applied_cxn is None
+                or self.hearer.applied_sa_pair is None
                 or (self.hearer.topic and self.hearer.topic != self.speaker.topic)
             ):
                 self.lexicon_change = True
