@@ -14,7 +14,6 @@ class Agent:
         self.communicative_success = True
         self.applied_cxn = None
         self.parsed_lexs = None
-        self.correct_path = None
         self.context = None
         self.world = world
         self.learning_rate = cfg.LEARNING_RATE
@@ -101,17 +100,6 @@ class Agent:
             self.topic = best_action[1]
         return self.parsed_lexs
 
-    def other_paths(self, topic):
-        """Find an alternative action that leads to the given topic"""
-        for obj in self.context:
-            categories = self.world.get_categories(obj)
-            possible_objects = list(
-                filter(lambda cxn: cxn.meaning in categories, self.parsed_lexs)
-            )
-            if len(possible_objects) == 1 and obj == topic:
-                return possible_objects[0]
-        return False
-
     def reconceptualize_and_adopt(self, topic, form):
         discr_cats = self.world.conceptualize(topic, self.context)
         for other_meaning in discr_cats:
@@ -120,11 +108,8 @@ class Agent:
     def adopt(self, meaning, form):
         """Adopts the association of meaning and form to the lexicon of the agent."""
         # [LG] - adding a new state/action to the state/action space
-        other_path = self.other_paths(meaning)
-        if self.applied_cxn is None or not other_path:
+        if self.applied_cxn is None:
             self.reconceptualize_and_adopt(meaning, form)
-        elif other_path:  # there was an another path
-            self.correct_path = other_path
 
     def update_q(self, cxn, reward):  # [RL] update score - based on feedback
         """Updates the q_value of a state, action pair (a construction)."""
@@ -151,18 +136,12 @@ class Agent:
 
         applied_cxn:
             check if the action was not added during the interaction (invention/adoption).
-        correct_path: another path to the topic is found
-            If true, this action (cxn) is treated specially in consolidation, i.e. treated as if it was succesful.
         """
         if self.applied_cxn and self.communicative_success:
             self.update_q(self.applied_cxn, self.reward_success)
             self.lateral_inhibition(self.applied_cxn)
-        else:
-            if self.correct_path:
-                self.update_q(self.correct_path, self.reward_success)
-                self.lateral_inhibition(self.correct_path)
-            elif self.applied_cxn:
-                self.update_q(self.applied_cxn, self.reward_failure)
+        elif self.applied_cxn:
+            self.update_q(self.applied_cxn, self.reward_failure)
 
     def print_lexicon(self):
         print(self.lexicon)
