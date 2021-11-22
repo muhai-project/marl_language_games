@@ -54,6 +54,8 @@ class BasicNamingGameEnv(Environment):
             True,
         )
 
+        self.lexicon_change = False
+
         if debug:
             print(f"  ~~ GAME BETWEEN: {self.speaker.id} - {self.hearer.id} ~~")
             print(f"  ~~ TOPIC: {self.topic} ~~")
@@ -62,7 +64,7 @@ class BasicNamingGameEnv(Environment):
         """Interaction script of the basic naming game"""
         # arm selection
         # [RL] - speaker chooses arm (construction) ifo topic
-        utterance = self.speaker.policy(SPEAKER, self.topic)
+        utterance, self.lexicon_change = self.speaker.policy(SPEAKER, self.topic)
         # [RL] - hearer chooses arm (construction) ifo utterance
         interpretation = self.hearer.policy(HEARER, utterance)
 
@@ -77,6 +79,7 @@ class BasicNamingGameEnv(Environment):
         # evaluate pulls
         if interpretation is None or interpretation != self.topic:
             # [LG] - adoption of the unseen state/action pair
+            self.lexicon_change = True
             self.hearer.adopt(self.topic, utterance)
             self.speaker.communicative_success = False
             self.hearer.communicative_success = False

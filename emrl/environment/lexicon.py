@@ -11,6 +11,9 @@ class Construction:
         self.form = form  # [LG] - state/action
         self.q_val = initial_value  # [RL] - value initialisation
 
+    def __hash__(self):
+        return hash((self.meaning, self.form))
+
     def __eq__(self, other):
         return self.meaning == other.meaning and self.form == other.form
 

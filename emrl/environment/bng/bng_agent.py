@@ -34,28 +34,27 @@ class Agent:
 
     def produce(self, meaning):  # [LG] - action selection in one direction
         """Finds or invents an action (a cxn) for the given meaning."""
-        actions = self.lexicon.get_cxns_with_meaning(
-            meaning
-        )  # state determines possible actions
+        # state determines possible actions
+        actions = self.lexicon.get_cxns_with_meaning(meaning)
         best_action = None
+        invented = False
         if actions:
             # select action with highest q_value
             best_action = self.epsilon_greedy(actions, eps=self.cfg.EPS_GREEDY)
         else:
+            invented = True
             # invent a new cxn for the meaning
             best_action = self.lexicon.invent_cxn(meaning)
         self.applied_cxn = best_action
-        return best_action.form
+        return best_action.form, invented
 
     def comprehend(self, utterance):  # [LG] - action selection in other direction
         """Interprets the action of a speaker (an utterance) and chooses a corresponding action."""
-        actions = self.lexicon.get_cxns_with_form(
-            utterance
-        )  # state determines possible actions
+        # state determines possible actions
+        actions = self.lexicon.get_cxns_with_form(utterance)
         if actions:
-            best_action = self.epsilon_greedy(
-                actions, eps=self.cfg.EPS_GREEDY
-            )  # selection action with highest q_value
+            # selection action with highest q_value
+            best_action = self.epsilon_greedy(actions, eps=self.cfg.EPS_GREEDY)
             self.applied_cxn = best_action
             return best_action.meaning
         return None
@@ -68,9 +67,8 @@ class Agent:
     def update_q(self, cxn, reward):  # [RL] update score - based on feedback
         """Updates the q_value of a state, action pair (a construction)."""
         old_q = cxn.q_val
-        new_q = old_q + self.cfg.LEARNING_RATE * (
-            reward - old_q
-        )  # no discount as it is a bandit
+        # no discount as it is a bandit
+        new_q = old_q + self.cfg.LEARNING_RATE * (reward - old_q)
         cxn.q_val = new_q
         if cxn.q_val < self.cfg.REWARD_FAILURE + self.cfg.EPSILON_FAILURE:
             self.lexicon.remove_cxn(cxn)

@@ -60,10 +60,9 @@ class Agent:
                 context_actions.append(choice)
         return context_actions
 
-    def policy(
-        self, role, state
-    ):  # [RL] - language processing is now a policy which depends on the role of the agent
+    def policy(self, role, state):
         """The given state corresponds to a meaning or form depending on the role of the agent."""
+        # [RL] - language processing is now a policy which depends on the role of the agent
         if role == SPEAKER:
             return self.produce(state)
         else:
@@ -74,17 +73,19 @@ class Agent:
         # state determines possible actions
         actions = self.lexicon.get_cxns_with_meaning(meanings)
         best_action = None
+        invented = False
         if actions:
             # [RL] - select action with highest q_value
             best_action = self.epsilon_greedy(actions, eps=self.eps_greedy)
         else:
+            invented = True
             meaning = self.invention_strategy(meanings)
             # [LG] - if no entry (action) is found for the given states in the
             # current q-table, then create a new entry for one of the states.
             best_action = self.lexicon.invent_cxn(meaning)
             # [LG] - add a new entry in the q-table
         self.applied_cxn = best_action
-        return best_action.form
+        return best_action.form, invented
 
     def comprehend(self, utterance):  # [LG] - action selection in other direction
         """Interprets the action of a speaker (an utterance) and chooses a corresponding action."""
@@ -114,9 +115,8 @@ class Agent:
     def update_q(self, cxn, reward):  # [RL] update score - based on feedback
         """Updates the q_value of a state, action pair (a construction)."""
         old_q = cxn.q_val
-        new_q = old_q + self.learning_rate * (
-            reward - old_q
-        )  # no discount as it is a bandit
+        # no discount as it is a bandit
+        new_q = old_q + self.learning_rate * (reward - old_q)
         cxn.q_val = new_q
         # new_q = old_q + reward
         # cxn.q_val = max(min(100, new_q), 0)

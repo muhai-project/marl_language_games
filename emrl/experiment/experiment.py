@@ -28,10 +28,10 @@ class Experiment:
                     if self.cfg.PRINT_EVERY and i % self.cfg.PRINT_EVERY == 0
                     else False
                 )
-                self.env.reset(
-                    debug
-                )  # [RL] - corresponds to :before interaction, i.e. pick context, topic and reset slots
-                self.env.step(debug)  # [RL] - single step episode (bandit)
+                # [RL] - corresponds to :before interaction, i.e. pick context, topic and reset slots
+                self.env.reset(debug)
+                # [RL] - single step episode (bandit)
+                self.env.step(debug)
                 self.record_events(serie)  # monitors
             self.print_debug()
 
@@ -41,6 +41,12 @@ class Experiment:
         self.monitors.record_communicative_success(serie)
         # average lexicon size
         self.monitors.record_lexicon_size(serie)
+        # lexicon coherence
+        self.monitors.record_lexicon_coherence(serie)
+        # lexicon change
+        self.monitors.record_lexicon_change(serie)
+        # avg forms per meaning
+        self.monitors.record_forms_per_meaning(serie)
         # record cumulative reward
         self.reward += (
             self.cfg.REWARD_SUCCESS

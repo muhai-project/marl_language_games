@@ -139,6 +139,7 @@ class GuessingGameEnv(Environment):
             True,
             True,
         )
+        self.lexicon_change = False
         if debug:
             print(f"  ~~ GAME BETWEEN: {self.speaker.id} - {self.hearer.id} ~~")
             print(f"  ~~ CONTEXT: {sorted(self.context)} ~~")
@@ -153,7 +154,9 @@ class GuessingGameEnv(Environment):
         if self.discriminative_cats:
             # arm selection
             # speaker chooses arm ifo topic
-            utterance = self.speaker.policy(SPEAKER, self.discriminative_cats)
+            utterance, self.lexicon_change = self.speaker.policy(
+                SPEAKER, self.discriminative_cats
+            )
             # hearer chooses arm ifo utterance
             interpretations = self.hearer.policy(HEARER, utterance)
 
@@ -171,6 +174,7 @@ class GuessingGameEnv(Environment):
                 or self.hearer.applied_cxn is None
                 or (self.hearer.topic and self.hearer.topic != self.speaker.topic)
             ):
+                self.lexicon_change = True
                 self.hearer.adopt(self.speaker.topic, utterance)  # adopt arms
                 self.speaker.communicative_success = False
                 self.hearer.communicative_success = False
