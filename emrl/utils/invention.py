@@ -6,8 +6,7 @@ ids = defaultdict(int)
 
 
 def make_id(name):
-    """
-    Creates a unique id for an object resembling a lisp symbol.
+    """Creates a unique id for an object resembling a lisp symbol.
 
     Each input gets its own counter that is incremented each time the function is called.
     To use:
@@ -23,10 +22,10 @@ def make_id(name):
     #'OBJ-1
 
     Args:
-        name: A string for which a so-called symbolic id is created.
+        name (str): a string for which a so-called symbolic id is created.
 
     Returns:
-        A string that is unique each time the function is called.
+        str: a string that is unique each time the function is called.
     """
     global ids
     val = f"#'{name}-{ids[name]}"
@@ -35,17 +34,17 @@ def make_id(name):
 
 
 def invent(syllables=3):
-    """
-    Invents a word with a number of syllables through random sampling of letters.
+    """Invents a word with a number of syllables through random sampling of letters.
 
     Each syllable has exactly two letters: a consonant and a vowel (in that order).
     The two letters are composed by randomly sampling from the set of possible choices.
+    Important: the invented word is not guaranteed to be unique!
 
     Args:
-        syllables: An integer representing the amount of syllables in the new word.
+        syllables (int, optional): an integer representing the amount of syllables in the new word. Defaults to 3.
 
     Returns:
-        A string that is randomly generated.
+        str: a string that is randomly generated.
     """
     vowels = ["a", "e", "i", "o", "u"]
     consonants = [

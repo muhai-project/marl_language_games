@@ -42,18 +42,17 @@ class BasicNamingGameEnv(Environment):
 
     def reset(self, debug=False):
         """Resets the basic naming game environment."""
+        # choosing
         self.topic = np.random.choice(self.world)
         # choose interacting agents
         self.speaker, self.hearer = np.random.choice(
             self.population, size=2, replace=False
         )
         # reset agent
-        self.speaker.applied_sa_pair, self.hearer.applied_sa_pair = None, None
-        self.speaker.communicative_success, self.hearer.communicative_success = (
-            True,
-            True,
-        )
+        self.speaker.reset()
+        self.hearer.reset()
 
+        # logging
         self.lexicon_change = False
 
         if debug:
@@ -62,10 +61,9 @@ class BasicNamingGameEnv(Environment):
 
     def step(self, debug=False):
         """Interaction script of the basic naming game"""
-        # arm selection
-        # [RL] - speaker chooses arm (construction) ifo topic
+        # speaker chooses action ifo topic
         utterance, self.lexicon_change = self.speaker.policy(SPEAKER, self.topic)
-        # [RL] - hearer chooses arm (construction) ifo utterance
+        # hearer chooses action ifo utterance
         interpretation = self.hearer.policy(HEARER, utterance)
 
         if debug:
@@ -78,7 +76,6 @@ class BasicNamingGameEnv(Environment):
 
         # evaluate pulls
         if interpretation is None or interpretation != self.topic:
-            # [LG] - adoption of the unseen state/action pair
             self.lexicon_change = True
             self.hearer.adopt(self.topic, utterance)
             self.speaker.communicative_success = False
@@ -88,5 +85,5 @@ class BasicNamingGameEnv(Environment):
             print(" ===> SUCCESS <===")
 
         # learn based on outcome
-        self.speaker.align()  # [LG] - value iteration
-        self.hearer.align()  # [LG] - value iteration
+        self.speaker.align()
+        self.hearer.align()

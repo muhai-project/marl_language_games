@@ -5,11 +5,11 @@ from prettytable import PrettyTable
 from emrl.utils.invention import invent
 
 
-class Construction:
+class SAPair:
     def __init__(self, meaning, form, initial_value=0):
-        self.meaning = meaning  # [LG] - state/action
-        self.form = form  # [LG] - state/action
-        self.q_val = initial_value  # [RL] - value initialisation
+        self.meaning = meaning
+        self.form = form
+        self.q_val = initial_value
 
     def __hash__(self):
         return hash((self.meaning, self.form))
@@ -26,36 +26,77 @@ class Lexicon:
 
     def __init__(self, cfg):
         self.cfg = cfg
-        self.q_table = []  # [LG] - the set of state/action pairs, i.e. the q-table
+        self.q_table = []  # the set of state/action pairs, i.e. the q-table
 
-    def invent_sa_pair(self, meaning):  # [LG] - adding a state/action pair
-        new_sa_pair = Construction(meaning, invent(), self.cfg.INITIAL_Q_VAL)
+    def invent_sa_pair(self, state):
+        """Invents an action for a given state and adds the new pair to the lexicon.
+
+        Args:
+            meaning (str): denotes the meaning of an object
+
+        Returns:
+            sa_pair: the newly added state/action pair of the lexicon
+        """
+        new_sa_pair = SAPair(state, invent(), self.cfg.INITIAL_Q_VAL)
         self.q_table.append(new_sa_pair)
         return new_sa_pair
 
-    def adopt_sa_pair(self, meaning, form):  # [LG] - adding a state/action pair
-        new_sa_pair = Construction(meaning, form, self.cfg.INITIAL_Q_VAL)
+    def adopt_sa_pair(self, meaning, form):
+        """Adds a given state/action pair to the lexicon.
+
+        The value of the new pair is initialized using the config.
+
+        Args:
+            meaning (str): denotes the meaning of an object
+            form (str): denotes the utterance to describe the object
+
+        Returns:
+            sa_pair: the newly added state/action pair of the lexicon
+        """
+        new_sa_pair = SAPair(meaning, form, self.cfg.INITIAL_Q_VAL)
         # uses Construction __eq__ to determine if member
         if new_sa_pair not in self.q_table:
             self.q_table.append(new_sa_pair)
         return new_sa_pair
 
-    def get_actions_produce(self, meanings):
-        # [LG] - retrieving all actions given a state
-        filtered = filter(lambda sa_pair: sa_pair.meaning in meanings, self.q_table)
+    def get_actions_produce(self, states):
+        """Returns the set of possible state/action pairs that have the given state.
+
+        The state in this case corresponds to a meaning of an object.
+
+        Args:
+            states (str or list): a single meaning or a list of meanings
+
+        Returns:
+            list: a list of all state/action pairs that are a match
+        """
+        filtered = filter(lambda sa_pair: sa_pair.meaning in states, self.q_table)
         return list(filtered)
 
-    def get_actions_comprehend(self, form):
-        filtered = filter(lambda sa_pair: sa_pair.form == form, self.q_table)
+    def get_actions_comprehend(self, states):
+        """Returns the set of possible state/action pairs that have the given state.
+
+        The state in this case corresponds to the form used to describe a meaning.
+
+        Args:
+            states (str or list): a single form or a list of form
+
+        Returns:
+            list: a list of all state/action pairs that are a match
+        """
+        filtered = filter(lambda sa_pair: sa_pair.form in states, self.q_table)
         return list(filtered)
 
     def remove_sa_pair(self, sa_pair):
+        """Removes a state/action pair from the lexicon."""
         self.q_table.remove(sa_pair)
 
     def __len__(self):
+        """Returns the length of the q-table, which corresponds to the amount of current entries."""
         return len(self.q_table)
 
     def __repr__(self):
+        """Returns a string representation of the lexicon as a 2 dimensional q-table."""
         tbl = PrettyTable()
 
         forms = sorted(list(set([cxn.form for cxn in self.q_table])))

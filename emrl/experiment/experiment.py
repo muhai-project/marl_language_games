@@ -9,46 +9,39 @@ class Experiment:
         self.monitors = Monitors(self)
 
     def initialize(self):
-        """
-        TODO reward here doesn't fit, its cumulated comm. success,
-        but interactions are local so no cumulated shared reward"""
-        self.reward = 0
+        self.global_reward = 0
         self.timesteps = 0
         self.env = self.select_env(self.cfg)
 
     def run_experiment(self):
-        # [LG] - RL literature doesn't do multiple series as it is deemed too expensive
         for serie in range(self.cfg.SERIES):
             self.initialize()
-            # [RL] - episode = a single interaction
             for i in range(0, self.cfg.EPISODES):
-                print(f"\n\n - Episode {i} - reward: {self.reward}")
+                print(f"\n\n - Episode {i} - population reward: {self.global_reward}")
                 debug = (
                     True
                     if self.cfg.PRINT_EVERY and i % self.cfg.PRINT_EVERY == 0
                     else False
                 )
-                # [RL] - corresponds to :before interaction, i.e. pick context, topic and reset slots
                 self.env.reset(debug)
-                # [RL] - single step episode (bandit)
                 self.env.step(debug)
                 self.record_events(serie)  # monitors
             self.print_debug()
 
-    def record_events(self, serie):
-        """Records the event of a serie to the monitor."""
+    def record_events(self, trial):
+        """Records the event of a trial to the monitor."""
         # communicative success
-        self.monitors.record_communicative_success(serie)
+        self.monitors.record_communicative_success(trial)
         # average lexicon size
-        self.monitors.record_lexicon_size(serie)
+        self.monitors.record_lexicon_size(trial)
         # lexicon coherence
-        self.monitors.record_lexicon_coherence(serie)
+        self.monitors.record_lexicon_coherence(trial)
         # lexicon change
-        self.monitors.record_lexicon_change(serie)
+        self.monitors.record_lexicon_change(trial)
         # avg forms per meaning
-        self.monitors.record_forms_per_meaning(serie)
-        # record cumulative reward
-        self.reward += (
+        self.monitors.record_forms_per_meaning(trial)
+        # record shared global cumulative reward
+        self.global_reward += (
             self.cfg.REWARD_SUCCESS
             if self.env.speaker.communicative_success
             else self.cfg.REWARD_FAILURE

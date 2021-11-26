@@ -44,7 +44,6 @@ def log_experiment(args, cfg):
     print(f" === Saving output to: {logdir} === ")
 
     # copy codebase
-    print("----", os.getcwd())
     code_dir_name = "emrl"
     code_dir = os.path.join(os.getcwd(), code_dir_name)
     shutil.copytree(

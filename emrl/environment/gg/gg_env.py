@@ -110,7 +110,7 @@ class GuessingGameEnv(Environment):
             self.cfg.AMOUNT_CATEGORIES,
             self.cfg.CATEGORIES_PER_OBJECT,
         )
-        self.context, self.topic, self.discriminative_cats = None, None, None
+        self.context, self.topic, self.discriminative_attrs = None, None, None
         self.speaker, self.hearer = None, None
         self.population = [
             Agent(self.cfg, self.world) for i in range(self.cfg.POPULATION_SIZE)
@@ -123,22 +123,19 @@ class GuessingGameEnv(Environment):
             self.population, size=2, replace=False
         )
 
+        # determine contex, topic and the discriminating categories
         self.context = self.world.pick_context(
             self.cfg.CONTEXT_MIN_SIZE, self.cfg.CONTEXT_MAX_SIZE
         )
         self.topic = self.world.pick_topic(self.context)
-        self.discriminative_cats = self.world.conceptualize(self.topic, self.context)
-        self.discriminative_cats.sort()  # for visualization
+        self.discriminative_attrs = self.world.conceptualize(self.topic, self.context)
+        self.discriminative_attrs.sort()  # for visualization
 
         # reset agent
-        self.speaker.context, self.hearer.context = self.context, self.context
-        self.speaker.applied_sa_pair, self.hearer.applied_sa_pair = None, None
-        self.speaker.parsed_lexs, self.hearer.parsed_lexs = None, None
-        self.speaker.topic, self.hearer.topic = self.topic, None
-        self.speaker.communicative_success, self.hearer.communicative_success = (
-            True,
-            True,
-        )
+        self.speaker.reset(self.context, topic=self.topic)
+        self.hearer.reset(self.context, topic=None)
+
+        # logging
         self.lexicon_change = False
         if debug:
             print(f"  ~~ GAME BETWEEN: {self.speaker.id} - {self.hearer.id} ~~")
@@ -146,18 +143,17 @@ class GuessingGameEnv(Environment):
             print(f"  ~~ TOPIC: {self.topic} ~~")
             self.world.print_contextualization(self.topic, self.context)
             print(
-                f"  ~~ DISCRIMINATING CATEGORIES: {sorted(self.discriminative_cats, key=len)} ~~"
+                f"  ~~ DISCRIMINATING CATEGORIES: {sorted(self.discriminative_attrs, key=len)} ~~"
             )
 
     def step(self, debug=False):
         """Interaction script of the guessing game"""
-        if self.discriminative_cats:
-            # arm selection
-            # speaker chooses arm ifo topic
+        if self.discriminative_attrs:
+            # speaker chooses action ifo topic
             utterance, self.lexicon_change = self.speaker.policy(
-                SPEAKER, self.discriminative_cats
+                SPEAKER, self.discriminative_attrs
             )
-            # hearer chooses arm ifo utterance
+            # hearer chooses action ifo utterance
             interpretations = self.hearer.policy(HEARER, utterance)
 
             if debug:
