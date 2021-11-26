@@ -13,7 +13,7 @@ dependencies:
   - brotli=1.0.9
   - brotli-bin=1.0.9
   - bzip2=1.0.8
-  - ca-certificates=2021.10.26
+  - ca-certificates=2021.10.8
   - certifi=2021.10.8
   - click=8.0.3
   - cloudpickle=1.6.0
@@ -81,6 +81,7 @@ dependencies:
   - pip=21.2.4
   - platformdirs=2.3.0
   - pluggy=1.0.0
+  - prettytable=2.4.0
   - prompt-toolkit=3.0.17
   - ptyprocess=0.7.0
   - py=1.11.0
