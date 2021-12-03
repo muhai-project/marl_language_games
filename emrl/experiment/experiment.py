@@ -40,6 +40,8 @@ class Experiment:
         self.monitors.record_lexicon_change(trial)
         # avg forms per meaning
         self.monitors.record_forms_per_meaning(trial)
+        # avg meanings per form
+        self.monitors.record_meanings_per_form(trial)
         # record shared global cumulative reward
         self.global_reward += (
             self.cfg.REWARD_SUCCESS

@@ -119,6 +119,34 @@ class Monitors:
         monitor = self.monitors["forms-per-meaning"]
         self.add_event_to_serie(monitor, serie, event)
 
+    def record_meanings_per_form(self, serie):
+        """Records the average number of meanings associated to each form by an agent is
+        averaged over all agents in the population
+
+        Args:
+            serie (int): index denoting which trial the new record belongs to
+        """
+        avgs = []
+        for agent in self.exp.env.population:
+            forms = defaultdict(int)
+            for sa_pair in agent.lexicon.q_table:
+                forms[sa_pair.form] += 1
+
+            counts = list(forms.values())
+            if counts:
+                avg = np.average(counts)  # average forms per meaning
+            else:
+                avg = 0
+            avgs.append(avg)
+
+        # average forms per meaning for the population
+        if avgs:
+            event = np.average(avgs)
+        else:
+            event = 0
+        monitor = self.monitors["meanings-per-form"]
+        self.add_event_to_serie(monitor, serie, event)
+
     def record_lexicon_change(self, serie):
         """Records how stable the agents' lexicons are.
 
