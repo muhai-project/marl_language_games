@@ -52,7 +52,7 @@ class Monitors:
         monitor = self.monitors["lexicon-size"]
         self.add_event_to_serie(monitor, serie, event)
 
-    def lexicon_coherence(self, speaker_lex, hearer_lex):
+    def lexicon_similarity(self, speaker_lex, hearer_lex):
         """Returns a measure how similar the lexicons of the interacting agents are.
 
         The degree of lexicon overlap between speaker s and hearer h of the current interaction is computed
@@ -77,8 +77,10 @@ class Monitors:
             )
         return coherence
 
-    def record_lexicon_coherence(self, serie):
+    def record_lexicon_similarity(self, serie):
         """Records how similar the lexicons of the interacting agents are.
+
+        Martin Loetszch's thesis calls this measure lexicon coherence.
 
         Args:
             serie (int): index denoting which trial the new record belongs to
@@ -87,7 +89,20 @@ class Monitors:
             self.exp.env.speaker.lexicon.q_table,
             self.exp.env.hearer.lexicon.q_table,
         )
-        event = self.lexicon_coherence(speaker_lex, hearer_lex)
+        event = self.lexicon_similarity(speaker_lex, hearer_lex)
+        monitor = self.monitors["grammar-similarity"]
+        self.add_event_to_serie(monitor, serie, event)
+
+    def record_lexicon_coherence(self, serie):
+        """Records how coherent the lexicons of the interactings agents are for the topic.
+
+        Coherence is measured by inspecting whether the hearer would produce
+        the same utterance for the given topic inside the context (must be measured before alignment!).
+
+        Args:
+            serie (int): index denoting which trial the new record belongs to
+        """
+        event = self.exp.env.lexicon_coherence
         monitor = self.monitors["lexicon-coherence"]
         self.add_event_to_serie(monitor, serie, event)
 

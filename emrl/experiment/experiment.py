@@ -34,8 +34,10 @@ class Experiment:
         self.monitors.record_communicative_success(trial)
         # average lexicon size
         self.monitors.record_lexicon_size(trial)
-        # lexicon coherence
+        # lexicon coherence between interacting agents
         self.monitors.record_lexicon_coherence(trial)
+        # lexicon similarity (loetszch version of lexicon coherence)
+        self.monitors.record_lexicon_similarity(trial)
         # lexicon change
         self.monitors.record_lexicon_change(trial)
         # avg forms per meaning

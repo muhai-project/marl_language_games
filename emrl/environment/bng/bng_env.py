@@ -54,6 +54,7 @@ class BasicNamingGameEnv(Environment):
 
         # logging
         self.lexicon_change = False
+        self.lexicon_coherence = False
 
         if debug:
             print(f"  ~~ GAME BETWEEN: {self.speaker.id} - {self.hearer.id} ~~")
@@ -74,9 +75,12 @@ class BasicNamingGameEnv(Environment):
             self.hearer.print_lexicon()
             print(f" === {self.hearer.id} interpreted {interpretation}")
 
+        hearer_utterance = self.hearer.produce_as_hearer(self.topic)  # monitoring
+        self.lexicon_coherence = hearer_utterance == utterance  # monitoring
+
         # evaluate pulls
         if interpretation is None or interpretation != self.topic:
-            self.lexicon_change = True
+            self.lexicon_change = True  # monitoring
             self.hearer.adopt(self.topic, utterance)
             self.speaker.communicative_success = False
             self.hearer.communicative_success = False
