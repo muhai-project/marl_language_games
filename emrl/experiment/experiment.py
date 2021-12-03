@@ -59,7 +59,7 @@ class Experiment:
         elif self.cfg.ENV == "gg":
             return GuessingGameEnv(cfg)
         else:
-            raise Exception(f"Given environment {self.cfg.ENV} is not valid!")
+            raise ValueError(f"Given environment {self.cfg.ENV} is not valid!")
 
     def print_debug(self):
         print("population: ")
