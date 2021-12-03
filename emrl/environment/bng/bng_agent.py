@@ -156,6 +156,15 @@ class Agent:
         else:
             raise ValueError(f"Given update rule {self.cfg.UPDATE_RULE} is not valid!")
 
+    def remove_sa_pair(self, sa_pair):
+        """Removes state-action pair from lexicon if and only if it is allowed.
+
+        Args:
+            sa_pair (SA_Pair): the newly added state/action pair of the lexicon
+        """
+        if self.cfg.DELETE_SA_PAIR:
+            self.lexicon.remove_sa_pair(sa_pair)
+
     def update_basic(self, sa_pair, delta):
         """Updates the q_value of the given state/action pair using the basic update rule."""
         old_q = sa_pair.q_val
@@ -167,7 +176,7 @@ class Agent:
 
         sa_pair.q_val = new_q
         if sa_pair.q_val <= 0:
-            self.lexicon.remove_sa_pair(sa_pair)
+            self.remove_sa_pair(sa_pair)
 
     def update_q(self, sa_pair, reward):
         """Updates the q_value of the given state/action pair using the interpolated update rule."""
@@ -176,7 +185,7 @@ class Agent:
         new_q = old_q + self.cfg.LEARNING_RATE * (reward - old_q)
         sa_pair.q_val = new_q
         if sa_pair.q_val < self.cfg.REWARD_FAILURE + self.cfg.EPSILON_FAILURE:
-            self.lexicon.remove_sa_pair(sa_pair)
+            self.remove_sa_pair(sa_pair)
 
     def lateral_inhibition(self):
         sa_pairs = self.lexicon.get_actions_produce(self.applied_sa_pair.meaning)

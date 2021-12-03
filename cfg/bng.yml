@@ -15,6 +15,7 @@ REWARD_FAILURE: -1
 EPSILON_FAILURE: 0.01 # margin of REWARD_FAILURE at which a cxn is deleted from the lexicon
 LATERAL_INHIBITION: True
 UPDATE_RULE: "interpolated"
+DELETE_SA_PAIR: True
 
 # DEBUGGING
 PRINT_EVERY: 100
