@@ -13,6 +13,8 @@ INITIAL_Q_VAL: 0 # default q-value
 REWARD_SUCCESS: 1
 REWARD_FAILURE: -1
 EPSILON_FAILURE: 0.01 # margin of REWARD_FAILURE at which a cxn is deleted from the lexicon
+LATERAL_INHIBITION: True
+UPDATE_RULE: "interpolated"
 
 # DEBUGGING
 PRINT_EVERY: 100

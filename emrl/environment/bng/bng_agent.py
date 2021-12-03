@@ -66,9 +66,8 @@ class Agent:
         Returns:
             str: an utterance
         """
-        best_action = None
         invented = False  # logging purposes
-
+        best_action = None
         actions = self.lexicon.get_actions_produce(state)
         if actions:
             # select action with highest q_value
@@ -129,8 +128,49 @@ class Agent:
         to the lexicon of the agent."""
         self.lexicon.adopt_sa_pair(topic, utterance)
 
+    def update(self, sa_pair, reward):
+        """Updates the Q-value of a given state-action pair using the specified update rule.
+
+        Note: make sure cfg.UPDATE_RULE also matches up with the specific init values for:
+            cfg.INITIAL_Q_VAL
+            cfg.REWARD_SUCCESS
+            cfg.REWARD_FAILURE
+
+        For example, for the basic strategy:
+            cfg.UPDATE_RULE: basic
+            cfg.INITIAL_Q_VAL: 0.5
+            cfg.REWARD_SUCCESS: 0.1 (~ delta_inc = 0.1)
+            cfg.REWARD_FAILURE: -0.1 (~ delta_dec = 0.1)
+
+        Args:
+            sa_pair: the newly added state/action pair of the lexicon
+            reward (float): reward associated with the update
+
+        Raises:
+            ValueError: True, if the given update rule is not implemented
+        """
+        if self.cfg.UPDATE_RULE == "interpolated":
+            self.update_q(sa_pair, reward)
+        elif self.cfg.UPDATE_RULE == "basic":
+            self.update_basic(sa_pair, reward)
+        else:
+            raise ValueError(f"Given update rule {self.cfg.UPDATE_RULE} is not valid!")
+
+    def update_basic(self, sa_pair, delta):
+        """Updates the q_value of the given state/action pair using the basic update rule."""
+        old_q = sa_pair.q_val
+        new_q = old_q + delta
+        if new_q >= 1:
+            new_q = 1
+        elif new_q <= 0:
+            new_q = 0
+
+        sa_pair.q_val = new_q
+        if sa_pair.q_val <= 0:
+            self.lexicon.remove_sa_pair(sa_pair)
+
     def update_q(self, sa_pair, reward):
-        """Updates the q_value of the given state/action pair."""
+        """Updates the q_value of the given state/action pair using the interpolated update rule."""
         old_q = sa_pair.q_val
         # no discount as it is a bandit
         new_q = old_q + self.cfg.LEARNING_RATE * (reward - old_q)
@@ -142,18 +182,18 @@ class Agent:
         sa_pairs = self.lexicon.get_actions_produce(self.applied_sa_pair.meaning)
         sa_pairs.remove(self.applied_sa_pair)
         for sa_pair in sa_pairs:
-            self.update_q(sa_pair, self.cfg.REWARD_FAILURE)
+            self.update(sa_pair, self.cfg.REWARD_FAILURE)
 
     def align(self):
         """Align the q-table of the agent with the given reward if and only if
         an action was chosen (applied_sa_pair)."""
         if self.applied_sa_pair:
             if self.communicative_success:
-                self.update_q(self.applied_sa_pair, self.cfg.REWARD_SUCCESS)
+                self.update(self.applied_sa_pair, self.cfg.REWARD_SUCCESS)
                 if self.cfg.LATERAL_INHIBITION:
                     self.lateral_inhibition()
             else:
-                self.update_q(self.applied_sa_pair, self.cfg.REWARD_FAILURE)
+                self.update(self.applied_sa_pair, self.cfg.REWARD_FAILURE)
 
     def print_lexicon(self):
         print(self.lexicon)
