@@ -21,7 +21,9 @@ This repository contains the code for Emergent Reinforcement Learning. It studie
     │
     ├── notebooks          <- Jupyter notebooks
     │
-    ├── tests              <- Unit tests for emrl
+    ├── scripts            <- Scripts of the emrl package
+    │
+    ├── tests              <- Unit tests for emrl package
     │
     ├── Makefile           <- Makefile with commands to create conda env
     │
