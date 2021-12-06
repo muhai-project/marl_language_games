@@ -53,6 +53,33 @@ class Experiment:
         # record timesteps
         self.timesteps += 1
 
+    def run_competition(self):
+        """Runs and generates data for a form-competition graph
+
+        This experiment logs the form competition in a lexicon of a specific agent for a specific meaning.
+        """
+        self.initialize()
+        agent_tracked, object_tracked = 1, 2
+        for i in range(0, self.cfg.EPISODES):
+            print(f"\n\n - Episode {i} - population reward: {self.global_reward}")
+            debug = (
+                True
+                if self.cfg.PRINT_EVERY and i % self.cfg.PRINT_EVERY == 0
+                else False
+            )
+            self.env.reset(debug)
+            self.env.step(debug)
+            self.record_competition(i, agent_tracked, object_tracked)
+
+        print("Lexicon of the tracked agent:")
+        ag = self.env.population[agent_tracked]
+        print(ag)
+        ag.print_lexicon()
+
+    def record_competition(self, episode, agent_idx, obj_idx):
+        # form competition
+        self.monitors.record_form_competition(episode, agent_idx, obj_idx)
+
     def select_env(self, cfg):
         if self.cfg.ENV == "bng":
             return BasicNamingGameEnv(cfg)

@@ -3,7 +3,7 @@ from collections import defaultdict
 
 import numpy as np
 
-from emrl.utils.plot import write_measure
+from emrl.utils.plot import write_measure, write_measure_competition
 
 
 class Monitors:
@@ -174,3 +174,49 @@ class Monitors:
         event = self.exp.env.lexicon_change
         monitor = self.monitors["lexicon-change"]
         self.add_event_to_serie(monitor, serie, event)
+
+    def add_event_competition(self, monitor, events, episode):
+        """Adds competition events to the given monitor.
+
+        This function also logs NIL entries for entries in the monitor that are not tracked anymore.
+        For example, when a SA_Pair is deleted from the lexicon, deleted sa_pair will be logged as NIL.
+
+        Args:
+            monitor (dict): monitor to which the events are added
+            events (list): list of (key, score) tuples
+            episode (int): current episode index
+        """
+        keys = list(monitor.keys())
+        for event in events:
+            key, val = event
+            if key not in monitor:
+                [monitor[key].append("NIL") for i in range(episode)]
+            monitor[key].append(val)
+            if key in keys:
+                keys.remove(key)
+        for key in keys:
+            monitor[key].append("NIL")
+
+    def record_form_competition(self, episode, agent_idx, obj_idx):
+        """Records the form competition for the specified object in the lexicon of the specified agent."""
+        if "form-competition" not in self.monitors:
+            # initialize competition monitor
+            self.monitors["form-competition"] = defaultdict(list)
+
+        meaning = self.exp.env.world[obj_idx]
+        agent = self.exp.env.population[agent_idx]
+
+        events = []
+        for sa_pair in agent.lexicon.q_table:
+            if meaning == sa_pair.meaning:
+                events.append((sa_pair.form, sa_pair.q_val))
+
+        monitor = self.monitors["form-competition"]
+        self.add_event_competition(monitor, events, episode)
+
+    def write_competition(self, logdir):
+        logdir = os.path.join(logdir, "monitors")
+        os.makedirs(logdir, exist_ok=True)
+
+        for key, data in self.monitors.items():
+            write_measure_competition(data, os.path.join(logdir, key))
