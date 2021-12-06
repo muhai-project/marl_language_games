@@ -16,8 +16,8 @@ def parse_args():
     parser.add_argument(
         "--cfg",
         dest="cfg_file",
-        help="optional config file",
-        default="cfg/bng.yml",
+        help="config file of the experiment",
+        required=True,
         type=str,
     )
     args = parser.parse_args()
