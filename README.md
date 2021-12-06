@@ -9,7 +9,7 @@ This repository contains the code for Emergent Reinforcement Learning. It studie
     ├── data
     │   ├── external       <- Data from third party sources.
     │   ├── interim        <- Intermediate data that has been transformed.
-    │   ├── processed      <- The wfinal, canonical data sets for modeling.
+    │   ├── processed      <- The final, canonical data sets for modeling.
     │   └── raw            <- The original, immutable data dump.
     │   └── log            <- Logged experiments
     │
