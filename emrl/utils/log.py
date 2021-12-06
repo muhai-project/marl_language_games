@@ -26,24 +26,35 @@ class Logger(object):
         pass
 
 
-def log_experiment(args, cfg):
+def create_logdir(path):
+    """Creates a new unique directory for an experiment, returns the path of this newly create folder.
+
+    Args:
+        path (str): path where to create the new directory
+
+    Returns:
+        str: path of the new directory
     """
-    Logs the experiment for reproducibility.
+    now = datetime.datetime.now(dateutil.tz.tzlocal())
+    logdir = os.path.join(path, str(now))
+    os.makedirs(logdir, exist_ok=True)
+    return logdir
+
+
+def log_experiment(args, cfg, logdir):
+    """Logs the experiment for reproducibility, returns the
 
     For each experiment a new unique directory is created.
     A copy of the code, config file and the sysout is copied.
 
     Args:
-        cfg_file: A string denoting the path to the config file.
+        args (dict): command-line arguments
+        cfg (dict): contains the parameters of the experiment to run
+        logdir (str): path of the folder where the experiment is logged
     """
-    # create unique directory
-    cfg_file = args.cfg_file
-    now = datetime.datetime.now(dateutil.tz.tzlocal())
-    logdir = f"data/log/{now}"
-    os.makedirs(logdir, exist_ok=True)
     print(f" === Saving output to: {logdir} === ")
 
-    # copy codebase
+    # copy emrl codebase
     code_dir_name = "emrl"
     code_dir = os.path.join(os.getcwd(), code_dir_name)
     shutil.copytree(
@@ -52,7 +63,17 @@ def log_experiment(args, cfg):
         ignore=shutil.ignore_patterns("*.pyc", "tmp*"),
     )
 
+    # copy scripts
+    code_dir_name = "scripts"
+    code_dir = os.path.join(os.getcwd(), code_dir_name)
+    shutil.copytree(
+        code_dir,
+        os.path.join(logdir, code_dir_name),
+        ignore=shutil.ignore_patterns("*.pyc", "tmp*"),
+    )
+
     # copy config file
+    cfg_file = args.cfg_file
     shutil.copy(cfg_file, logdir)
 
     # write terminal output to log
@@ -60,5 +81,3 @@ def log_experiment(args, cfg):
     print(" === Using config === ")
     pprint.pprint(vars(args))  # log raw command-line args
     pprint.pprint(cfg)  # log loaded cfg
-
-    return logdir

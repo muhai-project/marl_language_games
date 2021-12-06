@@ -20,3 +20,6 @@ EPSILON_FAILURE: 0.1 # margin of REWARD_FAILURE at which a cxn is deleted from t
 
 # DEBUGGING
 PRINT_EVERY: 100
+
+# LOGGING
+LOG_PATH: "data/log"
