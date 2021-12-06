@@ -1,5 +1,5 @@
 from emrl.environment.lexicon import Lexicon
-from emrl.utils.utils import cfg_from_file
+from emrl.utils.cfg import cfg_from_file
 
 cfg = cfg_from_file("cfg/bng.yml")  # TODO only tests for bng cfg?!
 # http://qualityisspeed.blogspot.com/2015/02/the-dependency-elimination-principle-a-canonical-example.html
