@@ -11,12 +11,12 @@ class Monitors:
         self.exp = exp
         self.monitors = defaultdict(list)
 
-    def add_event_to_serie(self, monitor, serie, event):
-        """Adds a new event to a monitor in a given serie."""
-        if len(monitor) <= serie:
-            monitor.append([event])  # assumes series are executed sequentially
+    def add_event_to_trial(self, monitor, trial, event):
+        """Adds a new event to a monitor in a given trial."""
+        if len(monitor) <= trial:
+            monitor.append([event])  # assumes trials are executed sequentially
         else:
-            monitor[serie].append(event)
+            monitor[trial].append(event)
 
     def write(self, logdir):
         logdir = os.path.join(logdir, "monitors")
@@ -25,24 +25,24 @@ class Monitors:
         for key, data in self.monitors.items():
             write_measure(data, os.path.join(logdir, key))
 
-    def record_communicative_success(self, serie):
+    def record_communicative_success(self, trial):
         """Records the success of the current interaction.
 
         Args:
-            serie (int): index denoting which trial the new record belongs to
+            trial (int): index denoting which trial the new record belongs to
         """
         event = self.exp.env.speaker.communicative_success
         monitor = self.monitors["communicative-success"]
-        self.add_event_to_serie(monitor, serie, event)
+        self.add_event_to_trial(monitor, trial, event)
 
-    def record_lexicon_size(self, serie):
+    def record_lexicon_size(self, trial):
         """Records the average number of words known by the population.
 
         The number of meaning-form associations in each agent's lexicon is counted and averaged over
         the number of agents.
 
         Args:
-            serie (int): index denoting which trial the new record belongs to
+            trial (int): index denoting which trial the new record belongs to
         """
         sizes = []
         for agent in self.exp.env.population:
@@ -50,7 +50,7 @@ class Monitors:
 
         event = int(sum(sizes) / len(sizes))  # average lexicon size
         monitor = self.monitors["lexicon-size"]
-        self.add_event_to_serie(monitor, serie, event)
+        self.add_event_to_trial(monitor, trial, event)
 
     def lexicon_similarity(self, speaker_lex, hearer_lex):
         """Returns a measure how similar the lexicons of the interacting agents are.
@@ -77,13 +77,13 @@ class Monitors:
             )
         return coherence
 
-    def record_lexicon_similarity(self, serie):
+    def record_lexicon_similarity(self, trial):
         """Records how similar the lexicons of the interacting agents are.
 
         Martin Loetszch's thesis calls this measure lexicon coherence.
 
         Args:
-            serie (int): index denoting which trial the new record belongs to
+            trial (int): index denoting which trial the new record belongs to
         """
         speaker_lex, hearer_lex = (
             self.exp.env.speaker.lexicon.q_table,
@@ -91,27 +91,27 @@ class Monitors:
         )
         event = self.lexicon_similarity(speaker_lex, hearer_lex)
         monitor = self.monitors["grammar-similarity"]
-        self.add_event_to_serie(monitor, serie, event)
+        self.add_event_to_trial(monitor, trial, event)
 
-    def record_lexicon_coherence(self, serie):
+    def record_lexicon_coherence(self, trial):
         """Records how coherent the lexicons of the interactings agents are for the topic.
 
         Coherence is measured by inspecting whether the hearer would produce
         the same utterance for the given topic inside the context (must be measured before alignment!).
 
         Args:
-            serie (int): index denoting which trial the new record belongs to
+            trial (int): index denoting which trial the new record belongs to
         """
         event = self.exp.env.lexicon_coherence
         monitor = self.monitors["lexicon-coherence"]
-        self.add_event_to_serie(monitor, serie, event)
+        self.add_event_to_trial(monitor, trial, event)
 
-    def record_forms_per_meaning(self, serie):
+    def record_forms_per_meaning(self, trial):
         """Records the average number of forms associated to each meaning by an agent is
         averaged over all agents in the population
 
         Args:
-            serie (int): index denoting which trial the new record belongs to
+            trial (int): index denoting which trial the new record belongs to
         """
         avgs = []
         for agent in self.exp.env.population:
@@ -132,14 +132,14 @@ class Monitors:
         else:
             event = 0
         monitor = self.monitors["forms-per-meaning"]
-        self.add_event_to_serie(monitor, serie, event)
+        self.add_event_to_trial(monitor, trial, event)
 
-    def record_meanings_per_form(self, serie):
+    def record_meanings_per_form(self, trial):
         """Records the average number of meanings associated to each form by an agent is
         averaged over all agents in the population
 
         Args:
-            serie (int): index denoting which trial the new record belongs to
+            trial (int): index denoting which trial the new record belongs to
         """
         avgs = []
         for agent in self.exp.env.population:
@@ -160,20 +160,20 @@ class Monitors:
         else:
             event = 0
         monitor = self.monitors["meanings-per-form"]
-        self.add_event_to_serie(monitor, serie, event)
+        self.add_event_to_trial(monitor, trial, event)
 
-    def record_lexicon_change(self, serie):
+    def record_lexicon_change(self, trial):
         """Records how stable the agents' lexicons are.
 
         For each interaction in which either the speaker or hearer add or remove a entry in the q_table,
         a value of 1 is recorded, for all others 0.
 
         Args:
-            serie (int): index denoting which trial the new record belongs to
+            trial (int): index denoting which trial the new record belongs to
         """
         event = self.exp.env.lexicon_change
         monitor = self.monitors["lexicon-change"]
-        self.add_event_to_serie(monitor, serie, event)
+        self.add_event_to_trial(monitor, trial, event)
 
     def add_event_competition(self, monitor, events, episode):
         """Adds competition events to the given monitor.

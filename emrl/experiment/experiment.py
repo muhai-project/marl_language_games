@@ -14,7 +14,7 @@ class Experiment:
         self.env = self.select_env(self.cfg)
 
     def run_experiment(self):
-        for serie in range(self.cfg.SERIES):
+        for trial in range(self.cfg.TRIALS):
             self.initialize()
             for i in range(0, self.cfg.EPISODES):
                 print(f"\n\n - Episode {i} - population reward: {self.global_reward}")
@@ -25,7 +25,7 @@ class Experiment:
                 )
                 self.env.reset(debug)
                 self.env.step(debug)
-                self.record_events(serie)  # monitors
+                self.record_events(trial)  # monitors
             self.print_debug()
 
     def record_events(self, trial):
