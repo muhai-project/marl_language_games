@@ -15,9 +15,10 @@ class Agent:
         self.id = make_id("AG")
         self.lexicon = Lexicon(self.cfg)
 
-    def reset(self):
+    def reset(self, context):
         self.communicative_success = True
         self.applied_sa_pair = None
+        self.context = context
 
     def epsilon_greedy(self, actions, eps):
         """Approach to balance exploitation vs exploration.
@@ -36,6 +37,11 @@ class Agent:
             return max(actions, key=lambda sa_pair: sa_pair.q_val)
         else:
             return random.sample(actions, k=1)[0]
+
+    def find_in_context(self, actions):
+        """Returns a subset (action masking) of the given actions that is consistent with the current context."""
+        context_actions = filter(lambda action: action.meaning in self.context, actions)
+        return list(context_actions)
 
     def policy(self, role, state):
         """Find the best action to take given the current state and the role of the agent.
@@ -95,6 +101,7 @@ class Agent:
             str or None: an utterance or none if the hearer could not produce for the state
         """
         actions = self.lexicon.get_actions_produce(state)
+        actions = self.find_in_context(actions)
         if actions:
             best_action = self.epsilon_greedy(actions, eps=self.cfg.EPS_GREEDY)
             return best_action.form

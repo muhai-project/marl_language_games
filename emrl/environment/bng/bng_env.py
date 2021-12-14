@@ -7,6 +7,26 @@ from emrl.environment.environment import Environment
 from emrl.utils.invention import make_id
 
 
+class World:
+    """Abstraction class of the part of the environment which handles the shared world."""
+
+    def __init__(self, world_size):
+        """Initializes a world of objects."""
+        self.objects = [make_id("OBJ") for i in range(world_size)]
+
+    def pick_topic(self, context):
+        """Given a list of objects (context) returns at random one of the objects as the topic."""
+        return random.sample(context, k=1)[0]
+
+    def pick_context(self, context_min_size, context_max_size):
+        """Given a world chooses a subset of the world of objects as the context.
+
+        The size of the context is sampled uniformly at run-time using the given parameters context_min/max_size.
+        """
+        context_size = np.random.randint(context_min_size, context_max_size + 1)
+        return random.sample(self.objects, k=context_size)
+
+
 class BasicNamingGameEnv(Environment):
     """
     Basic naming game environment
@@ -39,7 +59,7 @@ class BasicNamingGameEnv(Environment):
         super().__init__()
         self.cfg = cfg
         # The environment (world) consists of a set of objects.
-        self.world = [make_id("OBJ") for i in range(self.cfg.WORLD_SIZE)]
+        self.world = World(self.cfg.WORLD_SIZE)
         self.population = [Agent(cfg) for i in range(self.cfg.WORLD_SIZE)]
 
     def reset(self, debug=False):
@@ -47,10 +67,15 @@ class BasicNamingGameEnv(Environment):
         # determine interacting agents
         self.speaker, self.hearer = random.sample(self.population, k=2)
 
+        # determine context and topic
+        self.context = self.world.pick_context(
+            self.cfg.CONTEXT_MIN_SIZE, self.cfg.CONTEXT_MAX_SIZE
         )
+        self.topic = self.world.pick_topic(self.context)
+
         # reset agent
-        self.speaker.reset()
-        self.hearer.reset()
+        self.speaker.reset(self.context)
+        self.hearer.reset(self.context)
 
         # logging
         self.lexicon_change = False
