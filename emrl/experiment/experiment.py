@@ -65,13 +65,14 @@ class Experiment:
         """
         self.initialize()
         agent_tracked, object_tracked = 1, 2
-        for i in range(0, self.cfg.EPISODES):
-            print(f"\n\n - Episode {i} - population reward: {self.global_reward}")
+        for i in tqdm(range(0, self.cfg.EPISODES)):
             debug = (
                 True
                 if self.cfg.PRINT_EVERY and i % self.cfg.PRINT_EVERY == 0
                 else False
             )
+            if debug:
+                print(f"\n\n - Episode {i} - population reward: {self.global_reward}")
             self.env.reset(debug)
             self.env.step(debug)
             self.record_competition(i, agent_tracked, object_tracked)

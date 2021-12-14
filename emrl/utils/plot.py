@@ -20,9 +20,7 @@ def write_measure_competition(monitor, fname):
     """Writes competition data out to a specified file with a s-expression format required by Babel."""
     out = ""
     for key, vals in monitor.items():
-        vals = list(reversed(vals))
         data = ""
-        print("VAAAALS: ", len(vals))
         for val in vals:
             if isinstance(val, bool) or isinstance(val, int):
                 data += str(int(val)) + " "
@@ -33,7 +31,7 @@ def write_measure_competition(monitor, fname):
         data = data[:-1]
 
         # remove commas and square brackets, add brackets around list and concatenate lists
-        data = f"({key} (NIL ({data})))"
+        data = f"({key} ({data}))"
 
         out += data
     out = "((" + out + "))"  # add final round brackets

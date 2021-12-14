@@ -201,7 +201,7 @@ class Monitors:
             # initialize competition monitor
             self.monitors["form-competition"] = defaultdict(list)
 
-        meaning = self.exp.env.world[obj_idx]
+        meaning = self.exp.env.world.objects[obj_idx]
         agent = self.exp.env.population[agent_idx]
 
         events = []
