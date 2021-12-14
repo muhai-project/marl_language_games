@@ -1,3 +1,5 @@
+from tqdm import tqdm
+
 from emrl.environment.bng.bng_env import BasicNamingGameEnv
 from emrl.environment.gg.gg_env import GuessingGameEnv
 from emrl.experiment.monitors import Monitors
@@ -16,13 +18,16 @@ class Experiment:
     def run_experiment(self):
         for trial in range(self.cfg.TRIALS):
             self.initialize()
-            for i in range(0, self.cfg.EPISODES):
-                print(f"\n\n - Episode {i} - population reward: {self.global_reward}")
+            for i in tqdm(range(0, self.cfg.EPISODES)):
                 debug = (
                     True
                     if self.cfg.PRINT_EVERY and i % self.cfg.PRINT_EVERY == 0
                     else False
                 )
+                if debug:
+                    print(
+                        f"\n\n - Episode {i} - population reward: {self.global_reward}"
+                    )
                 self.env.reset(debug)
                 self.env.step(debug)
                 self.record_events(trial)  # monitors

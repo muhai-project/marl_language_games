@@ -109,9 +109,11 @@ class BasicNamingGameEnv(Environment):
             self.hearer.adopt(self.topic, utterance)
             self.speaker.communicative_success = False
             self.hearer.communicative_success = False
-            print(f" ===> FAILURE, hence adopting {utterance} <===")
+            if debug:
+                print(f" ===> FAILURE, hence adopting {utterance} <===")
         else:
-            print(" ===> SUCCESS <===")
+            if debug:
+                print(" ===> SUCCESS <===")
 
         # learn based on outcome
         self.speaker.align()

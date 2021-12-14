@@ -19,6 +19,21 @@ def parse_args():
         help="config file of the experiment",
         required=True,
         type=str,
+        nargs="*",
+    )
+    parser.add_argument(
+        "--print_every",
+        dest="print_every",
+        help="print every x iterations an example interaction",
+        type=int,
+        default=0,
+    )
+    parser.add_argument(
+        "--log_path",
+        dest="log_path",
+        help="path to the directory where to log the experiment",
+        type=str,
+        default="data/log",
     )
     args = parser.parse_args()
     return args

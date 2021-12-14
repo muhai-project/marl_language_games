@@ -41,7 +41,7 @@ def create_logdir(path):
     return logdir
 
 
-def log_experiment(args, cfg, logdir):
+def log_experiment(args, cfg_file, cfg, logdir):
     """Logs the experiment for reproducibility, returns the
 
     For each experiment a new unique directory is created.
@@ -73,11 +73,11 @@ def log_experiment(args, cfg, logdir):
     )
 
     # copy config file
-    cfg_file = args.cfg_file
     shutil.copy(cfg_file, logdir)
 
     # write terminal output to log
     sys.stdout = Logger(logfile=os.path.join(logdir, "logfile.log"))
     print(" === Using config === ")
     pprint.pprint(vars(args))  # log raw command-line args
+    print(f" this experiment uses cfg file: {cfg_file}")
     pprint.pprint(cfg)  # log loaded cfg

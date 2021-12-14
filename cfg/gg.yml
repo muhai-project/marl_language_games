@@ -7,7 +7,7 @@ CONTEXT_MIN_SIZE: 2
 CONTEXT_MAX_SIZE: 5
 POPULATION_SIZE: 10
 AMOUNT_CATEGORIES: 15
-CATEGORIES_PER_OBJECT: 3
+CATEGORIES_PER_OBJECT: 10
 
 # RL PARAMS
 LEARNING_RATE: 0.2 # Determines to what extent newly acquired info overrides old q-value
@@ -17,9 +17,3 @@ INITIAL_Q_VAL: 0 # default q-value
 REWARD_SUCCESS: 1
 REWARD_FAILURE: -1
 EPSILON_FAILURE: 0.1 # margin of REWARD_FAILURE at which a cxn is deleted from the lexicon
-
-# DEBUGGING
-PRINT_EVERY: 100
-
-# LOGGING
-LOG_PATH: "data/log"
