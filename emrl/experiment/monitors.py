@@ -1,8 +1,6 @@
 import os
 from collections import defaultdict
 
-import numpy as np
-
 from emrl.utils.plot import write_measure, write_measure_competition
 
 
@@ -121,14 +119,14 @@ class Monitors:
 
             counts = list(meanings.values())
             if counts:
-                avg = np.average(counts)  # average forms per meaning
+                avg = sum(counts) / len(counts)  # average forms per meaning
             else:
                 avg = 0
             avgs.append(avg)
 
         # average forms per meaning for the population
         if avgs:
-            event = np.average(avgs)
+            event = sum(avgs) / len(avgs)
         else:
             event = 0
         monitor = self.monitors["forms-per-meaning"]
@@ -149,14 +147,14 @@ class Monitors:
 
             counts = list(forms.values())
             if counts:
-                avg = np.average(counts)  # average forms per meaning
+                avg = sum(counts) / len(counts)  # average meanings per form
             else:
                 avg = 0
             avgs.append(avg)
 
         # average forms per meaning for the population
         if avgs:
-            event = np.average(avgs)
+            event = sum(avgs) / len(avgs)
         else:
             event = 0
         monitor = self.monitors["meanings-per-form"]

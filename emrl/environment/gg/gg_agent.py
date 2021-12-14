@@ -1,3 +1,5 @@
+import random
+
 import numpy as np
 
 from emrl.environment.lexicon import Lexicon
@@ -40,7 +42,7 @@ class Agent:
         if p < (1 - eps):
             return max(actions, key=lambda sa_pair: sa_pair.q_val)  # todo
         else:
-            return np.random.choice(actions)
+            return random.sample(actions, k=1)[0]
 
     def invention_strategy(self, meanings):
         """Strategy of invention by an agent.
@@ -50,7 +52,7 @@ class Agent:
         of the conceptualized meanings, a new word is created for a randomly chosen meaning and production
         is retried again.
         """
-        return np.random.choice(meanings)
+        return random.sample(meanings, k=1)[0]
 
     def find_in_context(self, actions):
         """Returns a subset (action masking) of the given actions that is consistent with the current context."""

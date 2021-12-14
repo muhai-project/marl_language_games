@@ -22,7 +22,7 @@ class World:
 
     def pick_topic(self, context):
         """Given a list of objects (context) returns at random one of the objects as the topic."""
-        return np.random.choice(context)
+        return random.sample(context, k=1)[0]
 
     def pick_context(self, context_min_size, context_max_size):
         """Given a world chooses a subset of the world of objects as the context.
@@ -30,7 +30,7 @@ class World:
         The size of the context is sampled uniformly at run-time using the given parameters context_min/max_size.
         """
         context_size = np.random.randint(context_min_size, context_max_size + 1)
-        return np.random.choice(self.objects, size=context_size, replace=False)
+        return random.sample(self.objects, k=context_size)
 
     def get_categories(self, obj):
         return self.objs[obj]
@@ -119,11 +119,9 @@ class GuessingGameEnv(Environment):
     def reset(self, debug=False):
         """Resets the guessing game environment."""
         # choose interacting agents
-        self.speaker, self.hearer = np.random.choice(
-            self.population, size=2, replace=False
-        )
+        self.speaker, self.hearer = random.sample(self.population, k=2)
 
-        # determine contex, topic and the discriminating categories
+        # determine context, topic and the discriminating categories
         self.context = self.world.pick_context(
             self.cfg.CONTEXT_MIN_SIZE, self.cfg.CONTEXT_MAX_SIZE
         )

@@ -1,3 +1,5 @@
+import random
+
 import numpy as np
 
 from emrl.environment.bng.bng_agent import HEARER, SPEAKER, Agent
@@ -42,11 +44,9 @@ class BasicNamingGameEnv(Environment):
 
     def reset(self, debug=False):
         """Resets the basic naming game environment."""
-        # choosing
-        self.topic = np.random.choice(self.world)
-        # choose interacting agents
-        self.speaker, self.hearer = np.random.choice(
-            self.population, size=2, replace=False
+        # determine interacting agents
+        self.speaker, self.hearer = random.sample(self.population, k=2)
+
         )
         # reset agent
         self.speaker.reset()

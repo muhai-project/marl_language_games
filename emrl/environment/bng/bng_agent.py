@@ -1,3 +1,5 @@
+import random
+
 import numpy as np
 
 from emrl.environment.lexicon import Lexicon
@@ -33,7 +35,7 @@ class Agent:
         if p < (1 - eps):
             return max(actions, key=lambda sa_pair: sa_pair.q_val)
         else:
-            return np.random.choice(actions)
+            return random.sample(actions, k=1)[0]
 
     def policy(self, role, state):
         """Find the best action to take given the current state and the role of the agent.

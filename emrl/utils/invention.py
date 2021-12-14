@@ -1,6 +1,5 @@
+import random
 from collections import defaultdict
-
-import numpy as np
 
 ids = defaultdict(int)
 
@@ -74,5 +73,5 @@ def invent(syllables=3):
     # produce word containing a sequence of syllables
     new_word = ""
     for i in range(syllables):
-        new_word += np.random.choice(consonants) + np.random.choice(vowels)
+        new_word += random.sample(consonants, k=1)[0] + random.sample(vowels, k=1)[0]
     return new_word
