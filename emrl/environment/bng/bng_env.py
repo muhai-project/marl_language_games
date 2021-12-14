@@ -60,7 +60,7 @@ class BasicNamingGameEnv(Environment):
         self.cfg = cfg
         # The environment (world) consists of a set of objects.
         self.world = World(self.cfg.WORLD_SIZE)
-        self.population = [Agent(cfg) for i in range(self.cfg.WORLD_SIZE)]
+        self.population = [Agent(cfg) for i in range(self.cfg.POPULATION_SIZE)]
 
     def reset(self, debug=False):
         """Resets the basic naming game environment."""
