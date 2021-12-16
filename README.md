@@ -84,8 +84,6 @@ The following commands runs for example the basic naming game with the parameter
 python scripts/run_experiment.py --cfg cfg/bng.yml
 ```
 
-It is common to find python projects where a default configuration is overwritten by a config file specified by a command-line argument. In my opinion this process is not transparant and prone to errors. Therefore, this project requires that every configurable parameter is set in the given config file. Running an experiment with missing parameters will crash the process. I have introduced a unittest in `tests/test_cfg` allowing the user to test their config beforehand.
-
 ## How to generate plots
 
 Once the experiments have completed, plots can be generated for the logged experiments. The Babel library contains an extensive and powerful plot engine. The engine requires the data of the experiments to be in a particular format, therefore in `utils/convert_data.py` the logger formats the logged data into the format expected by `Babel`. The script to produce the figures of the paper can be found under [`/experiments/emergent-rl/`](https://gitlab.ai.vub.ac.be/ehai/ehai-babel/-/blob/master/experiments/emergent-rl/) in `run.lisp`.
