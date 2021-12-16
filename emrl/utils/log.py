@@ -74,6 +74,10 @@ def log_experiment(args, cfg_file, cfg, logdir):
         os.path.join(logdir, code_dir_name),
         ignore=shutil.ignore_patterns("*.pyc", "tmp*"),
     )
+    shutil.make_archive(
+        os.path.join(logdir, "emrl"), "zip", os.path.join(logdir, code_dir_name)
+    )
+    shutil.rmtree(os.path.join(logdir, code_dir_name))
 
     # copy scripts
     code_dir_name = "scripts"
@@ -83,6 +87,10 @@ def log_experiment(args, cfg_file, cfg, logdir):
         os.path.join(logdir, code_dir_name),
         ignore=shutil.ignore_patterns("*.pyc", "tmp*"),
     )
+    shutil.make_archive(
+        os.path.join(logdir, "scripts"), "zip", os.path.join(logdir, code_dir_name)
+    )
+    shutil.rmtree(os.path.join(logdir, code_dir_name))
 
     # copy config file
     shutil.copy(cfg_file, logdir)
