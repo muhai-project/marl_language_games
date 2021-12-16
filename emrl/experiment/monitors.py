@@ -33,12 +33,24 @@ class Monitors:
         monitor = self.monitors["communicative-success"]
         self.add_event_to_trial(monitor, trial, event)
 
-    def calculate_lexicon_size(self, lexicon):
+    def calculate_lexicon_size(self, agent):
+        """Calculates the length of the lexicon.
+
+        If the cfg.IGNORE_LOW_SA_PAIR flag has been set, sa_pairs with q-values
+        lower than self.cfg.REWARD_FAILURE + self.cfg.EPSILON_FAILURE will not be counted.
+
+        Args:
+            agent (Agent): agent of which the lexicon size is calculated
+
+        Returns:
+            int: length of the lexicon
+        """
+        lexicon = agent.lexicon.q_table
         if self.exp.cfg.IGNORE_LOW_SA_PAIR:
             filtered_list = list(
                 filter(
                     lambda sa_pair: sa_pair.q_val
-                    > self.cfg.REWARD_FAILURE + self.cfg.EPSILON_FAILURE,
+                    > self.exp.cfg.REWARD_FAILURE + self.exp.cfg.EPSILON_FAILURE,
                     lexicon,
                 )
             )
@@ -57,7 +69,7 @@ class Monitors:
         """
         sizes = []
         for agent in self.exp.env.population:
-            lex_size = self.calculate_lexicon_size(agent.lexicon)
+            lex_size = self.calculate_lexicon_size(agent)
             sizes.append(lex_size)
 
         event = int(sum(sizes) / len(sizes))  # average lexicon size
