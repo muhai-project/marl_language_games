@@ -66,7 +66,7 @@ class Experiment:
             self.env.step(i)
             self.record_competition(i, agent_tracked, object_tracked)
 
-        self.log_state_of_lexicons(self.env.population[agent_tracked])
+        self.log_state_of_lexicons([self.env.population[agent_tracked]])
         unique_forms = list(self.monitors.monitors["form-competition"].keys())
         logging.info(
             f" Experiment with {len(unique_forms)} unique forms, namely: {unique_forms}"
