@@ -1,3 +1,4 @@
+import logging
 import random
 
 import numpy as np
@@ -62,7 +63,7 @@ class BasicNamingGameEnv(Environment):
         self.world = World(self.cfg.WORLD_SIZE)
         self.population = [Agent(cfg) for i in range(self.cfg.POPULATION_SIZE)]
 
-    def reset(self, debug=False):
+    def reset(self):
         """Resets the basic naming game environment."""
         # determine interacting agents
         self.speaker, self.hearer = random.sample(self.population, k=2)
@@ -81,24 +82,16 @@ class BasicNamingGameEnv(Environment):
         self.lexicon_change = False
         self.lexicon_coherence = False
 
-        if debug:
-            print(f"  ~~ GAME BETWEEN: {self.speaker.id} - {self.hearer.id} ~~")
-            print(f"  ~~ TOPIC: {self.topic} ~~")
+    def step(self, idx):
+        """Interaction script of the basic naming game
 
-    def step(self, debug=False):
-        """Interaction script of the basic naming game"""
+        Args:
+            idx (int): denotes the ith interaction in the environment
+        """
         # speaker chooses action ifo topic
         utterance, self.lexicon_change = self.speaker.policy(SPEAKER, self.topic)
         # hearer chooses action ifo utterance
         interpretation = self.hearer.policy(HEARER, utterance)
-
-        if debug:
-            print(f" === {self.speaker.id} q-table:")
-            self.speaker.print_lexicon()
-            print(f" === {self.speaker.id} uttered {utterance}")
-            print(f" === {self.hearer.id} q-table:")
-            self.hearer.print_lexicon()
-            print(f" === {self.hearer.id} interpreted {interpretation}")
 
         hearer_utterance = self.hearer.produce_as_hearer(self.topic)  # monitoring
         self.lexicon_coherence = hearer_utterance == utterance  # monitoring
@@ -109,12 +102,26 @@ class BasicNamingGameEnv(Environment):
             self.hearer.adopt(self.topic, utterance)
             self.speaker.communicative_success = False
             self.hearer.communicative_success = False
-            if debug:
-                print(f" ===> FAILURE, hence adopting {utterance} <===")
-        else:
-            if debug:
-                print(" ===> SUCCESS <===")
 
         # learn based on outcome
         self.speaker.align()
         self.hearer.align()
+
+        # debug interactions
+        if self.cfg.PRINT_EVERY and idx % self.cfg.PRINT_EVERY == 0:
+            self.print_example_interaction(idx, utterance, interpretation)
+
+    def print_example_interaction(self, idx, utterance, interpretation):
+        logging.debug(f"\n\n- Episode {idx}")
+        logging.debug(f" ~~ GAME BETWEEN: {self.speaker.id} - {self.hearer.id} ~~")
+        logging.debug(f" ~~ TOPIC: {self.topic} ~~")
+        logging.debug(f" === {self.speaker.id} q-table:")
+        logging.debug(self.speaker.lexicon)
+        logging.debug(f" === {self.speaker.id} uttered {utterance}")
+        logging.debug(f" === {self.hearer.id} q-table:")
+        logging.debug(self.hearer.lexicon)
+        logging.debug(f" === {self.hearer.id} interpreted {interpretation}")
+        if self.speaker.communicative_success:
+            logging.debug(f" ===> FAILURE, hence adopting {utterance} <===")
+        else:
+            logging.debug(" ===> SUCCESS <===")

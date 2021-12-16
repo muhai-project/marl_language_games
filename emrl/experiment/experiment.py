@@ -1,3 +1,5 @@
+import logging
+
 from tqdm import tqdm
 
 from emrl.environment.bng.bng_env import BasicNamingGameEnv
@@ -19,19 +21,10 @@ class Experiment:
         for trial in range(self.cfg.TRIALS):
             self.initialize()
             for i in tqdm(range(0, self.cfg.EPISODES)):
-                debug = (
-                    True
-                    if self.cfg.PRINT_EVERY and i % self.cfg.PRINT_EVERY == 0
-                    else False
-                )
-                if debug:
-                    print(
-                        f"\n\n - Episode {i} - population reward: {self.global_reward}"
-                    )
-                self.env.reset(debug)
-                self.env.step(debug)
+                self.env.reset()
+                self.env.step(i)
                 self.record_events(trial)  # monitors
-            self.print_debug()
+            self.log_state_of_lexicons(self.env.population)
 
     def record_events(self, trial):
         """Records the event of a trial to the monitor."""
@@ -66,23 +59,16 @@ class Experiment:
         self.initialize()
         agent_tracked, object_tracked = 1, 2
         for i in tqdm(range(0, self.cfg.EPISODES)):
-            debug = (
-                True
-                if self.cfg.PRINT_EVERY and i % self.cfg.PRINT_EVERY == 0
-                else False
+            logging.debug(
+                f"\n\n - Episode {i} - population reward: {self.global_reward}"
             )
-            if debug:
-                print(f"\n\n - Episode {i} - population reward: {self.global_reward}")
-            self.env.reset(debug)
-            self.env.step(debug)
+            self.env.reset()
+            self.env.step(i)
             self.record_competition(i, agent_tracked, object_tracked)
 
-        print("Lexicon of the tracked agent:")
-        ag = self.env.population[agent_tracked]
-        print(ag)
-        ag.print_lexicon()
+        self.log_state_of_lexicons(self.env.population[agent_tracked])
         unique_forms = list(self.monitors.monitors["form-competition"].keys())
-        print(
+        logging.info(
             f" Experiment with {len(unique_forms)} unique forms, namely: {unique_forms}"
         )
 
@@ -98,8 +84,8 @@ class Experiment:
         else:
             raise ValueError(f"Given environment {self.cfg.ENV} is not valid!")
 
-    def print_debug(self):
-        print("population: ")
-        for ag in self.env.population:
-            print(ag)
-            ag.print_lexicon()
+    def log_state_of_lexicons(self, agents):
+        logging.info("State of the lexicons at the end of the experiment: ")
+        for ag in agents:
+            logging.info(ag)
+            logging.info(f"\n {ag.lexicon}")

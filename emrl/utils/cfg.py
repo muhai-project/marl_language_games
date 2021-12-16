@@ -22,18 +22,21 @@ def parse_args():
         nargs="*",
     )
     parser.add_argument(
-        "--print_every",
-        dest="print_every",
-        help="print every x iterations an example interaction",
-        type=int,
-        default=0,
-    )
-    parser.add_argument(
         "--log_path",
         dest="log_path",
         help="path to the directory where to log the experiment",
         type=str,
         default="data/log",
+    )
+    parser.add_argument(
+        "--debug", dest="debug", help="activates debug logging", action="store_true"
+    )
+    parser.add_argument(
+        "--print_every",
+        dest="print_every",
+        help="print every x iterations an example interaction",
+        type=int,
+        default=1000,
     )
     args = parser.parse_args()
     return args

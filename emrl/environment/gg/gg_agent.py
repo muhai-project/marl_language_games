@@ -179,8 +179,5 @@ class Agent:
         elif self.applied_sa_pair:
             self.update_q(self.applied_sa_pair, self.reward_failure)
 
-    def print_lexicon(self):
-        print(self.lexicon)
-
     def __str__(self):
         return f"Agent id: {self.id}"

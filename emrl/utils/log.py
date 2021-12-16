@@ -1,29 +1,32 @@
 import datetime
+import logging
 import os
-import pprint
 import shutil
 import sys
+from pprint import pformat
 
 import dateutil
 import dateutil.tz
 
 
 class Logger(object):
-    def __init__(self, logfile):
-        self.terminal = sys.stdout
-        self.log = open(logfile, "a")
+    def __init__(self, logfile, mode):
+        logging.basicConfig(
+            filename=logfile,
+            filemode="a",
+            format="%(levelname)s - %(message)s",
+            datefmt="%H:%M:%S",
+            level=mode,
+        )
 
-    def write(self, message):
-        self.terminal.write(message)
-        self.log.write(message)
-        sys.stdout.flush()
-        self.log.flush()
+        root = logging.getLogger()
+        root.setLevel(mode)
 
-    def flush(self):
-        # this flush method is needed for python 3 compatibility.
-        # this handles the flush command by doing nothing.
-        # you might want to specify some extra behavior here.
-        pass
+        handler = logging.StreamHandler(sys.stdout)
+        handler.setLevel(mode)
+        formatter = logging.Formatter("%(levelname)s - %(message)s")
+        handler.setFormatter(formatter)
+        root.addHandler(handler)
 
 
 def create_logdir(path):
@@ -52,7 +55,16 @@ def log_experiment(args, cfg_file, cfg, logdir):
         cfg (dict): contains the parameters of the experiment to run
         logdir (str): path of the folder where the experiment is logged
     """
-    print(f" === Saving output to: {logdir} === ")
+    # set up logger
+    Logger(
+        logfile=os.path.join(logdir, "logfile.log"),
+        mode=(logging.DEBUG if args.debug else logging.INFO),
+    )
+    logging.info(f" === Saving output to: {logdir} === ")
+    logging.info(" === Using config === ")
+    logging.info(pformat(vars(args)))  # log raw command-line args
+    logging.info(f" this experiment uses cfg file: {cfg_file}")
+    logging.info(pformat(cfg))  # log loaded cfg
 
     # copy emrl codebase
     code_dir_name = "emrl"
@@ -74,10 +86,3 @@ def log_experiment(args, cfg_file, cfg, logdir):
 
     # copy config file
     shutil.copy(cfg_file, logdir)
-
-    # write terminal output to log
-    sys.stdout = Logger(logfile=os.path.join(logdir, "logfile.log"))
-    print(" === Using config === ")
-    pprint.pprint(vars(args))  # log raw command-line args
-    print(f" this experiment uses cfg file: {cfg_file}")
-    pprint.pprint(cfg)  # log loaded cfg

@@ -213,8 +213,5 @@ class Agent:
             else:
                 self.update(self.applied_sa_pair, self.cfg.REWARD_FAILURE)
 
-    def print_lexicon(self):
-        print(self.lexicon)
-
     def __str__(self):
         return f"Agent id: {self.id}"

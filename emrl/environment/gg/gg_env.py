@@ -1,3 +1,4 @@
+import logging
 import random
 from collections import defaultdict
 
@@ -7,6 +8,10 @@ from prettytable import PrettyTable
 from emrl.environment.environment import Environment
 from emrl.environment.gg.gg_agent import HEARER, SPEAKER, Agent
 from emrl.utils.invention import make_id
+
+SUCCESS = 0
+FAIL_THEN_ADOPT = 1
+FAIL_DUE_TO_DISCR = 2
 
 
 class World:
@@ -43,7 +48,7 @@ class World:
             discr_cats -= set(self.objs[obj])
         return list(discr_cats)
 
-    def print_contextualization(self, topic, context):
+    def get_contextualization_table(self, topic, context):
         tbl = PrettyTable()
 
         context.sort()
@@ -76,7 +81,7 @@ class World:
         for row in rows:
             tbl.add_row(row)
 
-        print(tbl)
+        return str(tbl)
 
 
 class GuessingGameEnv(Environment):
@@ -135,17 +140,14 @@ class GuessingGameEnv(Environment):
 
         # logging
         self.lexicon_change = False
-        if debug:
-            print(f"  ~~ GAME BETWEEN: {self.speaker.id} - {self.hearer.id} ~~")
-            print(f"  ~~ CONTEXT: {sorted(self.context)} ~~")
-            print(f"  ~~ TOPIC: {self.topic} ~~")
-            self.world.print_contextualization(self.topic, self.context)
-            print(
-                f"  ~~ DISCRIMINATING CATEGORIES: {sorted(self.discriminative_attrs, key=len)} ~~"
-            )
 
-    def step(self, debug=False):
-        """Interaction script of the guessing game"""
+    def step(self, idx):
+        """Interaction script of the guessing game
+
+        Args:
+            idx (int): denotes the ith interaction in the environment
+        """
+        outcome = None
         if self.discriminative_attrs:
             # speaker chooses action ifo topic
             utterance, self.lexicon_change = self.speaker.policy(
@@ -154,14 +156,6 @@ class GuessingGameEnv(Environment):
             # hearer chooses action ifo utterance
             interpretations = self.hearer.policy(HEARER, utterance)
 
-            if debug:
-                print(f" === {self.speaker.id} q-table:")
-                self.speaker.print_lexicon()
-                print(f" === {self.speaker.id} uttered {utterance}")
-                print(f" === {self.hearer.id} q-table:")
-                self.hearer.print_lexicon()
-                print(f" === {self.hearer.id} interpreted {self.hearer.topic}")
-
             # evaluate pulls
             if (
                 interpretations is None
@@ -169,16 +163,40 @@ class GuessingGameEnv(Environment):
                 or (self.hearer.topic and self.hearer.topic != self.speaker.topic)
             ):
                 self.lexicon_change = True
-                self.hearer.adopt(self.speaker.topic, utterance)  # adopt arms
+                self.hearer.adopt(self.speaker.topic, utterance)
                 self.speaker.communicative_success = False
                 self.hearer.communicative_success = False
-                print(" ===> FAILURE, hence adopting {utterance} <===")
+                outcome = FAIL_THEN_ADOPT  # fail, adopt
             else:
-                print(" ===> SUCCESS <===")
+                outcome = SUCCESS  # success
             # learn based on outcome
             self.speaker.align()
             self.hearer.align()
         else:  # no discriminating categories for the topic
-            print(" ===> FAILURE, due to no discrimination <===")
             self.speaker.communicative_success = False
             self.hearer.communicative_success = False
+            outcome = FAIL_DUE_TO_DISCR
+        self.print_example_interaction(idx, utterance, outcome)
+
+    def print_example_interaction(self, idx, utterance, outcome):
+        logging.debug(f"\n\n- Episode {idx}")
+        logging.debug(f"  ~~ GAME BETWEEN: {self.speaker.id} - {self.hearer.id} ~~")
+        logging.debug(f"  ~~ CONTEXT: {sorted(self.context)} ~~")
+        logging.debug(f"  ~~ TOPIC: {self.topic} ~~")
+        logging.debug(self.world.get_contextualization_table(self.topic, self.context))
+        logging.debug(
+            f"  ~~ DISCRIMINATING CATEGORIES: {sorted(self.discriminative_attrs, key=len)} ~~"
+        )
+        logging.debug(f" === {self.speaker.id} q-table:")
+        logging.debug(self.speaker.lexicon)
+        logging.debug(f" === {self.speaker.id} uttered {utterance}")
+        logging.debug(f" === {self.hearer.id} q-table:")
+        logging.debug(self.hearer.lexicon)
+        logging.debug(f" === {self.hearer.id} interpreted {self.hearer.topic}")
+
+        if outcome == FAIL_THEN_ADOPT:
+            logging.debug(" ===> FAILURE, hence adopting {utterance} <===")
+        elif outcome == SUCCESS:
+            logging.debug(" ===> SUCCESS <===")
+        elif outcome == FAIL_DUE_TO_DISCR:
+            logging.debug(" ===> FAILURE, due to no discrimination <===")
