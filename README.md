@@ -8,10 +8,8 @@ This repository contains the code for Emergent Reinforcement Learning. It studie
     │
     ├── data
     │   ├── external       <- Data from third party sources.
-    │   ├── interim        <- Intermediate data that has been transformed.
-    │   ├── processed      <- The final, canonical data sets for modeling.
-    │   └── raw            <- The original, immutable data dump.
-    │   └── log            <- Logged experiments
+    │   ├── processed      <- Place logged experiments .
+    │   └── log            <- The original, immutable logged experiments.
     │
     ├── docs               <- A default Sphinx project; see sphinx-doc.org
     │
@@ -51,3 +49,43 @@ The `environment.yml` file presents in this repository makes it easy to recreate
 3. Then to install the `emrl` package into the newly create `(emrl)` environment, run:
    - `make install_env2`
    - You should see the `emrl` package when listing all dependencies of the environment through `conda list`.
+
+## Running an experiment
+
+Make sure that the `emrl` environment has been setup and activated.
+
+Two scripts are available in the directory `scripts` at the moment:
+
+```
+run_experiment.py # running a full experiment with multiple trials
+run_competition.py # running an experiment solely for the purpose of creating competition graphs
+```
+
+Both scripts allow the following command-line args:
+
+- `--cfg`
+  - [required] [str]
+  - specifies a path to a yml config file in the cfg/ directory
+- `--log_path`
+  - [optional] [str] [default: `'/data/log'`]
+  - specify a directory where to store the experiment
+- `--debug`
+  - [optional] [flag] [default: `false`]
+  - specify whether to log DEBUG-level messages
+  - messages are logged to a logfile in `--log_path`
+- `--print-every`
+  - [optional] [int] [default `1000`]
+  - requires `--debug` flag to be set
+  - logs every x-th communicative interaction (and prints to stdout)
+
+The following commands runs for example the basic naming game with the parameters specified in the cfg found at `cfg/bng.yml`.
+
+```
+python scripts/run_experiment.py --cfg cfg/bng.yml
+```
+
+It is common to find python projects where a default configuration is overwritten by a config file specified by a command-line argument. In my opinion this process is not transparant and prone to errors. Therefore, this project requires that every configurable parameter is set in the given config file. Running an experiment with missing parameters will crash the process. I have introduced a unittest in `tests/test_cfg` allowing the user to test their config beforehand.
+
+## How to generate plots
+
+Once the experiments have completed, plots can be generated for the logged experiments. The Babel library contains an extensive and powerful plot engine. The engine requires the data of the experiments to be in a particular format, therefore in `utils/convert_data.py` the logger formats the logged data into the format expected by `Babel`. The script to produce the figures of the paper can be found under [`/experiments/emergent-rl/`](https://gitlab.ai.vub.ac.be/ehai/ehai-babel/-/blob/master/experiments/emergent-rl/) in `run.lisp`.
