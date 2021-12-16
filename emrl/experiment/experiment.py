@@ -81,6 +81,10 @@ class Experiment:
         ag = self.env.population[agent_tracked]
         print(ag)
         ag.print_lexicon()
+        unique_forms = list(self.monitors.monitors["form-competition"].keys())
+        print(
+            f" Experiment with {len(unique_forms)} unique forms, namely: {unique_forms}"
+        )
 
     def record_competition(self, episode, agent_idx, obj_idx):
         # form competition
