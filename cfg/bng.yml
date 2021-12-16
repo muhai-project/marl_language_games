@@ -15,6 +15,7 @@ INITIAL_Q_VAL: 0 # default q-value
 REWARD_SUCCESS: 1
 REWARD_FAILURE: -1
 EPSILON_FAILURE: 0.01 # margin of REWARD_FAILURE at which a cxn is deleted from the lexicon
-LATERAL_INHIBITION: True
-UPDATE_RULE: "interpolated"
-DELETE_SA_PAIR: True
+LATERAL_INHIBITION: True # lateral inhibition (punish competitors)
+UPDATE_RULE: "interpolated" # "basic" or "interpolated", update ifo REWARD_FAILURE, REWARD_SUCCESS
+DELETE_SA_PAIR: False # delete sa_pairs with a low q-value (ifo of REWARD_FAILURE and EPSILON_FAILURE)
+IGNORE_LOW_SA_PAIR: True # ignore sa_pairs with a low q-value (ifo of REWARD_FAILURE and EPSILON_FAILURE) when logging monitors

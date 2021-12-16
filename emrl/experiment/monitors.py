@@ -33,6 +33,19 @@ class Monitors:
         monitor = self.monitors["communicative-success"]
         self.add_event_to_trial(monitor, trial, event)
 
+    def calculate_lexicon_size(self, lexicon):
+        if self.exp.cfg.IGNORE_LOW_SA_PAIR:
+            filtered_list = list(
+                filter(
+                    lambda sa_pair: sa_pair.q_val
+                    > self.cfg.REWARD_FAILURE + self.cfg.EPSILON_FAILURE,
+                    lexicon,
+                )
+            )
+            return len(filtered_list)
+        else:
+            return len(lexicon)
+
     def record_lexicon_size(self, trial):
         """Records the average number of words known by the population.
 
@@ -44,7 +57,8 @@ class Monitors:
         """
         sizes = []
         for agent in self.exp.env.population:
-            sizes.append(len(agent.lexicon))
+            lex_size = self.calculate_lexicon_size(agent.lexicon)
+            sizes.append(lex_size)
 
         event = int(sum(sizes) / len(sizes))  # average lexicon size
         monitor = self.monitors["lexicon-size"]
@@ -61,7 +75,8 @@ class Monitors:
         between speaker and hearer as a approximation for population coherence.
 
         Args:
-            experiment (Experiment): The experiment object containing the local interaction.
+            speaker_lex (list): lexicon of the speaker
+            hearer_lex (list): lexicon of the hearer
 
         Returns:
             float: a number between [0, 1] denoting the coherence of the given lexicons
