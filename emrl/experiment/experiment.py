@@ -85,7 +85,7 @@ class Experiment:
             raise ValueError(f"Given environment {self.cfg.ENV} is not valid!")
 
     def log_state_of_lexicons(self, agents):
-        logging.info("State of the lexicons at the end of the experiment: ")
+        logging.debug("State of the lexicons at the end of the experiment: ")
         for ag in agents:
-            logging.info(ag)
-            logging.info(f"\n {ag.lexicon}")
+            logging.debug(ag)
+            logging.debug(f"\n {ag.lexicon}")

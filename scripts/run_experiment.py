@@ -8,7 +8,8 @@ if __name__ == "__main__":
         cfg = cfg_from_file(cfg_file)
         cfg.PRINT_EVERY = args.print_every
         logdir = create_logdir(args.log_path)
-        log_experiment(args, cfg_file, cfg, logdir)
+        logger = log_experiment(args, cfg_file, cfg, logdir)
         experiment = Experiment(cfg)
         experiment.run_experiment()
         experiment.monitors.write(logdir)
+        logger.close()

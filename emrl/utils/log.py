@@ -19,14 +19,19 @@ class Logger(object):
             level=mode,
         )
 
-        root = logging.getLogger()
-        root.setLevel(mode)
+        self.root = logging.getLogger()
+        self.root.setLevel(mode)
 
-        handler = logging.StreamHandler(sys.stdout)
-        handler.setLevel(mode)
+        self.handler = logging.StreamHandler(sys.stdout)
+        self.handler.setLevel(mode)
         formatter = logging.Formatter("%(levelname)s - %(message)s")
-        handler.setFormatter(formatter)
-        root.addHandler(handler)
+        self.handler.setFormatter(formatter)
+        self.root.addHandler(self.handler)
+
+    def close(self):
+        self.handler.flush = sys.stdout.flush
+        self.root.removeHandler(self.handler)
+        self.root.handlers.clear()
 
 
 def create_logdir(path):
@@ -54,9 +59,12 @@ def log_experiment(args, cfg_file, cfg, logdir):
         args (dict): command-line arguments
         cfg (dict): contains the parameters of the experiment to run
         logdir (str): path of the folder where the experiment is logged
+
+    Returns:
+        Logger: handles logging administration
     """
     # set up logger
-    Logger(
+    logger = Logger(
         logfile=os.path.join(logdir, "logfile.log"),
         mode=(logging.DEBUG if args.debug else logging.INFO),
     )
@@ -94,3 +102,5 @@ def log_experiment(args, cfg_file, cfg, logdir):
 
     # copy config file
     shutil.copy(cfg_file, logdir)
+
+    return logger
