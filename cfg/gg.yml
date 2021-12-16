@@ -11,9 +11,12 @@ CATEGORIES_PER_OBJECT: 10
 
 # RL PARAMS
 LEARNING_RATE: 0.2 # Determines to what extent newly acquired info overrides old q-value
-DISCOUNT_FACTOR: 0 # If 𝛾=0, agent only needs to learn about actions that produce an immediate reward
 EPS_GREEDY: 0 # deterministic, always choose action a with highest q-value
 INITIAL_Q_VAL: 0 # default q-value
 REWARD_SUCCESS: 1
 REWARD_FAILURE: -1
 EPSILON_FAILURE: 0.1 # margin of REWARD_FAILURE at which a cxn is deleted from the lexicon
+LATERAL_INHIBITION: True # lateral inhibition (punish competitors)
+UPDATE_RULE: "interpolated" # "basic" or "interpolated", update ifo REWARD_FAILURE, REWARD_SUCCESS
+DELETE_SA_PAIR: False # delete sa_pairs with a low q-value (ifo of REWARD_FAILURE and EPSILON_FAILURE)
+IGNORE_LOW_SA_PAIR: True # ignore sa_pairs with a low q-value (ifo of REWARD_FAILURE and EPSILON_FAILURE) when logging monitors

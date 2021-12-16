@@ -9,7 +9,6 @@ POPULATION_SIZE: 10
 
 # RL PARAMS
 LEARNING_RATE: 0.1 # Determines to what extent newly acquired info overrides old q-value
-DISCOUNT_FACTOR: 0 # If 𝛾=0, agent only needs to learn about actions that produce an immediate reward
 EPS_GREEDY: 0 # deterministic, always choose action a with highest q-value
 INITIAL_Q_VAL: 0 # default q-value
 REWARD_SUCCESS: 1
