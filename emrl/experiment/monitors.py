@@ -1,7 +1,7 @@
 import os
 from collections import defaultdict
 
-from emrl.utils.plot import write_measure, write_measure_competition
+from emrl.utils.convert_data import write_measure, write_measure_competition
 
 
 class Monitors:
