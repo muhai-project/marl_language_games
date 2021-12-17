@@ -65,20 +65,22 @@ Both scripts allow the following command-line args:
 
 - `--cfg`
   - [required] [str]
-  - specifies a path to a yml config file in the cfg/ directory
+  - specifies a path to a yml config file
+  - examples of configs can be found in the `cfg/` directory
 - `--log_path`
   - [optional] [str] [default: `'/data/log'`]
-  - specify a directory where to store the experiment
+  - specify the path where to store the experiment
+  - each run is stored in a unique directory in `--log_path`
 - `--debug`
   - [optional] [flag] [default: `false`]
   - specify whether to log DEBUG-level messages
-  - messages are logged to a logfile in `--log_path`
+  - messages are logged to a logfile in the unique directory under `--log_path`
 - `--print-every`
   - [optional] [int] [default `1000`]
   - requires `--debug` flag to be set
   - logs every x-th communicative interaction (and prints to stdout)
 
-The following commands runs for example the basic naming game with the parameters specified in the cfg found at `cfg/bng.yml`.
+For example, the following command runs the basic naming game experiment with the parameters specified in the configuration file found at `cfg/bng.yml`.
 
 ```
 python scripts/run_experiment.py --cfg cfg/bng.yml
