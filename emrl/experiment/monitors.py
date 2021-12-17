@@ -47,13 +47,22 @@ class Monitors:
         """
         lexicon = agent.lexicon.q_table
         if self.exp.cfg.IGNORE_LOW_SA_PAIR:
-            filtered_list = list(
-                filter(
-                    lambda sa_pair: sa_pair.q_val
-                    > self.exp.cfg.REWARD_FAILURE + self.exp.cfg.EPSILON_FAILURE,
-                    lexicon,
+            if self.exp.cfg.UPDATE_RULE == "interpolated":
+                filtered_list = list(
+                    filter(
+                        lambda sa_pair: sa_pair.q_val
+                        >= self.exp.cfg.REWARD_FAILURE + self.exp.cfg.EPSILON_FAILURE,
+                        lexicon,
+                    )
                 )
-            )
+            elif self.exp.cfg.UPDATE_RULE == "basic":
+                filtered_list = list(
+                    filter(
+                        lambda sa_pair: sa_pair.q_val
+                        >= self.exp.cfg.REWARD_SUCCESS + self.exp.cfg.EPSILON_FAILURE,
+                        lexicon,
+                    )
+                )
             return len(filtered_list)
         else:
             return len(lexicon)
@@ -142,7 +151,21 @@ class Monitors:
         for agent in self.exp.env.population:
             meanings = defaultdict(int)
             for sa_pair in agent.lexicon.q_table:
-                meanings[sa_pair.meaning] += 1
+                if self.exp.cfg.IGNORE_LOW_SA_PAIR:
+                    if self.exp.cfg.UPDATE_RULE == "interpolated" and (
+                        sa_pair.q_val
+                        >= self.exp.cfg.REWARD_FAILURE + self.exp.cfg.EPSILON_FAILURE
+                    ):
+                        meanings[sa_pair.meaning] += 1
+
+                    elif self.exp.cfg.UPDATE_RULE == "basic" and (
+                        sa_pair.q_val
+                        >= self.exp.cfg.REWARD_SUCCESS + self.exp.cfg.EPSILON_FAILURE
+                    ):
+
+                        meanings[sa_pair.meaning] += 1
+                else:
+                    meanings[sa_pair.meaning] += 1
 
             counts = list(meanings.values())
             if counts:
@@ -170,8 +193,17 @@ class Monitors:
         for agent in self.exp.env.population:
             forms = defaultdict(int)
             for sa_pair in agent.lexicon.q_table:
-                forms[sa_pair.form] += 1
-
+                if self.exp.cfg.IGNORE_LOW_SA_PAIR:
+                    if self.exp.cfg.UPDATE_RULE == "interpolated" and (
+                        sa_pair.q_val
+                        >= self.exp.cfg.REWARD_FAILURE + self.exp.cfg.EPSILON_FAILURE
+                    ):
+                        forms[sa_pair.form] += 1
+                    elif self.exp.cfg.UPDATE_RULE == "basic" and (
+                        sa_pair.q_val
+                        >= self.exp.cfg.REWARD_SUCCESS + self.exp.cfg.EPSILON_FAILURE
+                    ):
+                        forms[sa_pair.form] += 1
             counts = list(forms.values())
             if counts:
                 avg = sum(counts) / len(counts)  # average meanings per form
