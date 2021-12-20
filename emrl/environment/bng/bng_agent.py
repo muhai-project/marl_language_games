@@ -78,7 +78,7 @@ class Agent:
         best_action = None
         actions = self.lexicon.get_actions_produce(state)
         if actions:
-            # select action with highest q_value
+            # select action with highest q-value
             best_action = self.epsilon_greedy(actions, eps=self.cfg.EPS_GREEDY)
         else:
             # invent a new sa_pair for the meaning
@@ -124,7 +124,7 @@ class Agent:
         """
         actions = self.lexicon.get_actions_comprehend(state)
         if actions:
-            # selection action with highest q_value
+            # selection action with highest q-value
             best_action = self.epsilon_greedy(actions, eps=self.cfg.EPS_GREEDY)
             self.applied_sa_pair = best_action
             return best_action.meaning
@@ -175,7 +175,7 @@ class Agent:
             self.lexicon.remove_sa_pair(sa_pair)
 
     def update_basic(self, sa_pair, delta):
-        """Updates the q_value of the given state/action pair using the basic update rule."""
+        """Updates the q-value of the given state/action pair using the basic update rule."""
         old_q = sa_pair.q_val
         new_q = old_q + delta
         if new_q >= 1:
@@ -188,7 +188,7 @@ class Agent:
             self.remove_sa_pair(sa_pair)
 
     def update_q(self, sa_pair, reward):
-        """Updates the q_value of the given state/action pair using the interpolated update rule."""
+        """Updates the q-value of the given state/action pair using the interpolated update rule."""
         old_q = sa_pair.q_val
         # no discount as it is a bandit
         new_q = old_q + self.cfg.LEARNING_RATE * (reward - old_q)

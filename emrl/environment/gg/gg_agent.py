@@ -106,7 +106,7 @@ class Agent:
         best_action = None
         actions = self.lexicon.get_actions_produce(meanings)
         if actions:
-            # select action with highest q_value
+            # select action with highest q-value
             best_action = self.epsilon_greedy(actions, eps=self.eps_greedy)
         else:
             # invent a new sa_pair for the meaning
@@ -133,7 +133,7 @@ class Agent:
         parsed_lexs = self.lexicon.get_actions_comprehend(utterance)
         actions = self.find_in_context(parsed_lexs)
         if actions:
-            # selection action with highest q_value
+            # selection action with highest q-value
             # note: given actions are (cxn - topic) tuples, hence path[0].q_val, TODO readability
             best_action = max(actions, key=lambda path: path[0].q_val)
             self.applied_sa_pair, self.topic = best_action
@@ -156,7 +156,7 @@ class Agent:
             self.reconceptualize_and_adopt(meaning, form)
 
     def update_q(self, sa_pair, reward):
-        """Updates the q_value of the given state/action pair."""
+        """Updates the q-value of the given state/action pair."""
         old_q = sa_pair.q_val
         # no discount as it is a bandit
         new_q = old_q + self.learning_rate * (reward - old_q)
