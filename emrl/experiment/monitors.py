@@ -33,6 +33,22 @@ class Monitors:
         monitor = self.monitors["communicative-success"]
         self.add_event_to_trial(monitor, trial, event)
 
+    def keep_value(self, sa_pair):
+        """True if and only if the Q-value of the sa_pair is larger than the reward for failure + some epsilon.
+
+        Boolean check only for the interpolated update rule
+        """
+        if self.exp.cfg.UPDATE_RULE == "interpolated":
+            return (
+                sa_pair.q_val
+                >= self.exp.cfg.REWARD_FAILURE + self.exp.cfg.EPSILON_FAILURE
+            )
+        elif self.exp.cfg.UPDATE_RULE == "basic":
+            return (
+                sa_pair.q_val
+                >= self.exp.cfg.REWARD_SUCCESS + self.exp.cfg.EPSILON_FAILURE
+            )
+
     def calculate_lexicon_size(self, agent):
         """Calculates the length of the lexicon.
 
@@ -47,22 +63,12 @@ class Monitors:
         """
         lexicon = agent.lexicon.q_table
         if self.exp.cfg.IGNORE_LOW_SA_PAIR:
-            if self.exp.cfg.UPDATE_RULE == "interpolated":
-                filtered_list = list(
-                    filter(
-                        lambda sa_pair: sa_pair.q_val
-                        >= self.exp.cfg.REWARD_FAILURE + self.exp.cfg.EPSILON_FAILURE,
-                        lexicon,
-                    )
+            filtered_list = list(
+                filter(
+                    lambda sa_pair: self.keep_value(sa_pair),
+                    lexicon,
                 )
-            elif self.exp.cfg.UPDATE_RULE == "basic":
-                filtered_list = list(
-                    filter(
-                        lambda sa_pair: sa_pair.q_val
-                        >= self.exp.cfg.REWARD_SUCCESS + self.exp.cfg.EPSILON_FAILURE,
-                        lexicon,
-                    )
-                )
+            )
             return len(filtered_list)
         else:
             return len(lexicon)
@@ -151,22 +157,10 @@ class Monitors:
         for agent in self.exp.env.population:
             meanings = defaultdict(int)
             for sa_pair in agent.lexicon.q_table:
-                if self.exp.cfg.IGNORE_LOW_SA_PAIR:
-                    if self.exp.cfg.UPDATE_RULE == "interpolated" and (
-                        sa_pair.q_val
-                        >= self.exp.cfg.REWARD_FAILURE + self.exp.cfg.EPSILON_FAILURE
-                    ):
-                        meanings[sa_pair.meaning] += 1
-
-                    elif self.exp.cfg.UPDATE_RULE == "basic" and (
-                        sa_pair.q_val
-                        >= self.exp.cfg.REWARD_SUCCESS + self.exp.cfg.EPSILON_FAILURE
-                    ):
-
-                        meanings[sa_pair.meaning] += 1
-                else:
+                if not self.exp.cfg.IGNORE_LOW_SA_PAIR or (
+                    self.exp.cfg.IGNORE_LOW_SA_PAIR and self.keep_value(sa_pair)
+                ):
                     meanings[sa_pair.meaning] += 1
-
             counts = list(meanings.values())
             if counts:
                 avg = sum(counts) / len(counts)  # average forms per meaning
@@ -193,17 +187,10 @@ class Monitors:
         for agent in self.exp.env.population:
             forms = defaultdict(int)
             for sa_pair in agent.lexicon.q_table:
-                if self.exp.cfg.IGNORE_LOW_SA_PAIR:
-                    if self.exp.cfg.UPDATE_RULE == "interpolated" and (
-                        sa_pair.q_val
-                        >= self.exp.cfg.REWARD_FAILURE + self.exp.cfg.EPSILON_FAILURE
-                    ):
-                        forms[sa_pair.form] += 1
-                    elif self.exp.cfg.UPDATE_RULE == "basic" and (
-                        sa_pair.q_val
-                        >= self.exp.cfg.REWARD_SUCCESS + self.exp.cfg.EPSILON_FAILURE
-                    ):
-                        forms[sa_pair.form] += 1
+                if not self.exp.cfg.IGNORE_LOW_SA_PAIR or (
+                    self.exp.cfg.IGNORE_LOW_SA_PAIR and self.keep_value(sa_pair)
+                ):
+                    forms[sa_pair.form] += 1
             counts = list(forms.values())
             if counts:
                 avg = sum(counts) / len(counts)  # average meanings per form
