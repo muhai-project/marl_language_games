@@ -19,6 +19,7 @@ class Experiment:
 
     def run_experiment(self):
         for trial in range(self.cfg.TRIALS):
+            logging.info(f" == Experiment trial {trial+1}/{self.cfg.TRIALS} ==")
             self.initialize()
             for i in tqdm(range(0, self.cfg.EPISODES)):
                 self.env.reset()
