@@ -140,6 +140,7 @@ class GuessingGameEnv(Environment):
 
         # logging
         self.lexicon_change = False
+        self.lexicon_coherence = False
 
     def step(self, idx):
         """Interaction script of the guessing game
@@ -155,6 +156,9 @@ class GuessingGameEnv(Environment):
             )
             # hearer chooses action ifo utterance
             interpretations = self.hearer.policy(HEARER, utterance)
+
+            hearer_utterance = self.hearer.produce_as_hearer(self.topic)  # monitoring
+            self.lexicon_coherence = hearer_utterance == utterance  # monitoring
 
             # evaluate pulls
             if (

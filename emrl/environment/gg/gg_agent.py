@@ -71,6 +71,27 @@ class Agent:
                 context_actions.append(choice)
         return context_actions
 
+    def produce_as_hearer(self, state):
+        """Returns an utterance given the state of the environment as hearer.
+
+        The state of the environment corresponds to a row in the q-table of the agent.
+
+        Serves to monitor lexicon coherence between interacting agents.
+
+        Args:
+            state (str): the topic of the interaction
+
+        Returns:
+            str or None: an utterance or none if the hearer could not produce for the state
+        """
+        actions = self.lexicon.get_actions_produce(state)
+        actions = self.find_in_context(actions)
+        if actions:
+            best_action = self.epsilon_greedy(actions, eps=self.eps_greedy)
+            return best_action.form
+        else:
+            return None
+
     def policy(self, role, state):
         """Find the best action to take given the current state and the role of the agent.
 
