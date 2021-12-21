@@ -16,13 +16,14 @@ dependencies:
   - brotli-bin=1.0.9
   - brotlipy=0.7.0
   - bzip2=1.0.8
-  - ca-certificates=2021.10.26
+  - ca-certificates=2021.10.8
   - certifi=2021.10.8
   - cffi=1.14.6
   - charset-normalizer=2.0.8
   - click=8.0.3
   - cloudpickle=1.6.0
   - colorama=0.4.4
+  - coverage=6.2
   - cryptography=36.0.0
   - cycler=0.10.0
   - dataclasses=0.8
@@ -108,6 +109,7 @@ dependencies:
   - pyparsing=2.4.7
   - pysocks=1.7.1
   - pytest=6.2.5
+  - pytest-cov=3.0.0
   - python=3.9.6
   - python-dateutil=2.8.2
   - python_abi=3.9
