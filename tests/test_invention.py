@@ -1,12 +1,15 @@
-from emrl.utils.invention import invent, make_id
+from emrl.utils.invention import ids, invent, make_id
 
 
 def test_make_id():
-    assert make_id("AG") == "#'AG-0"
-    assert make_id("AG") == "#'AG-1"
-    assert make_id("OBJ") == "#'OBJ-0"
-    assert make_id("AG") == "#'AG-2"
-    assert make_id("OBJ") == "#'OBJ-1"
+    ag_id = ids["AG"]
+    obj_id = ids["OBJ"]
+
+    assert make_id("AG") == f"#'AG-{ag_id+0}"
+    assert make_id("AG") == f"#'AG-{ag_id+1}"
+    assert make_id("OBJ") == f"#'OBJ-{obj_id+0}"
+    assert make_id("AG") == f"#'AG-{ag_id+2}"
+    assert make_id("OBJ") == f"#'OBJ-{obj_id+1}"
 
 
 def test_invent():
