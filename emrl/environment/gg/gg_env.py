@@ -172,11 +172,12 @@ class GuessingGameEnv(Environment):
             # learn based on outcome
             self.speaker.align()
             self.hearer.align()
+
+            self.print_example_interaction(idx, utterance, outcome)
         else:  # no discriminating categories for the topic
             self.speaker.communicative_success = False
             self.hearer.communicative_success = False
             outcome = FAIL_DUE_TO_DISCR
-        self.print_example_interaction(idx, utterance, outcome)
 
     def print_example_interaction(self, idx, utterance, outcome):
         logging.debug(f"\n\n- Episode {idx}")
