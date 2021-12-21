@@ -4,7 +4,6 @@ import random
 import numpy as np
 
 from emrl.environment.bng.bng_agent import HEARER, SPEAKER, Agent
-from emrl.environment.environment import Environment
 from emrl.utils.invention import make_id
 
 
@@ -28,7 +27,7 @@ class World:
         return random.sample(self.objects, k=context_size)
 
 
-class BasicNamingGameEnv(Environment):
+class BasicNamingGameEnv:
     """
     Basic naming game environment
 

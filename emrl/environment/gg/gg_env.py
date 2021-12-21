@@ -5,7 +5,6 @@ from collections import defaultdict
 import numpy as np
 from prettytable import PrettyTable
 
-from emrl.environment.environment import Environment
 from emrl.environment.gg.gg_agent import HEARER, SPEAKER, Agent
 from emrl.utils.invention import make_id
 
@@ -84,7 +83,7 @@ class World:
         return str(tbl)
 
 
-class GuessingGameEnv(Environment):
+class GuessingGameEnv:
     """
     Guessing game environment
 
