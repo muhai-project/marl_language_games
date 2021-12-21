@@ -107,7 +107,6 @@ class GuessingGameEnv:
     """
 
     def __init__(self, cfg):
-        super().__init__()
         self.cfg = cfg
         self.world = World(
             self.cfg.WORLD_SIZE,

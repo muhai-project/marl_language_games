@@ -56,9 +56,7 @@ class BasicNamingGameEnv:
     """
 
     def __init__(self, cfg):
-        super().__init__()
         self.cfg = cfg
-        # The environment (world) consists of a set of objects.
         self.world = World(self.cfg.WORLD_SIZE)
         self.population = [Agent(cfg) for i in range(self.cfg.POPULATION_SIZE)]
 
