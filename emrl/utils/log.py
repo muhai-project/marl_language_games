@@ -42,8 +42,8 @@ def create_logdir(path):
     Returns:
         str: path of the new directory
     """
-    now = datetime.datetime.now(dateutil.tz.tzlocal())
-    logdir = os.path.join(path, str(now))
+    now = str(datetime.datetime.now(dateutil.tz.tzlocal())).replace(" ", "_")
+    logdir = os.path.join(path, now)
     os.makedirs(logdir, exist_ok=True)
     return logdir
 
