@@ -50,6 +50,28 @@ def test_get_actions_produce():
     assert len(filtered_sa_pairs) == 2
     for sa_pair in filtered_sa_pairs:
         assert sa_pair.meaning == "m1"
+        assert sa_pair.form == "f1" or sa_pair.form == "f2"
+
+
+def test_get_actions_comprehend():
+    lex = Lexicon(cfg)
+    meanings = ["m1", "m2", "m3", "m4", "m5"]
+    forms = ["f1", "f2", "f3", "f4", "f5"]
+    for meaning, form in zip(meanings, forms):
+        lex.adopt_sa_pair(meaning, form)
+    assert len(lex) == 5
+    filtered_sa_pairs = lex.get_actions_comprehend("f2")
+    assert (
+        len(filtered_sa_pairs) == 1
+        and filtered_sa_pairs[0].meaning == "m2"
+        and filtered_sa_pairs[0].form == "f2"
+    )
+    lex.adopt_sa_pair("m1", "f2")
+    filtered_sa_pairs = lex.get_actions_comprehend("f2")
+    assert len(filtered_sa_pairs) == 2
+    for sa_pair in filtered_sa_pairs:
+        assert sa_pair.form == "f2"
+        assert sa_pair.meaning == "m1" or sa_pair.meaning == "m2"
 
 
 def test_remove_sa_pair():
@@ -60,5 +82,27 @@ def test_remove_sa_pair():
     for meaning, form in zip(meanings, forms):
         last = lex.adopt_sa_pair(meaning, form)
     assert len(lex) == 5
+    assert last in lex.q_table
     lex.remove_sa_pair(last)
     assert len(lex) == 4
+    assert last not in lex.q_table
+
+
+def test_lex_repr():
+    lex = Lexicon(cfg)
+    meanings = ["m1", "m2", "m3", "m4", "m5"]
+    forms = ["f1", "f2", "f3", "f4", "f5"]
+    for meaning, form in zip(meanings, forms):
+        lex.adopt_sa_pair(meaning, form)
+    lex_repr = str(lex)
+
+    for meaning in meanings:
+        assert meaning in lex_repr
+    for form in forms:
+        assert form in lex_repr
+
+    first = lex.q_table[0]
+    first.q_val = 500.0156
+    assert lex.q_table[0].q_val == 500.0156
+    lex_repr = str(lex)
+    assert "500.016" in lex_repr
