@@ -14,7 +14,6 @@ class Logger(object):
         logging.basicConfig(
             filename=logfile,
             filemode="a",
-            format="%(levelname)s - %(message)s",
             datefmt="%H:%M:%S",
             level=mode,
         )
@@ -24,7 +23,7 @@ class Logger(object):
 
         self.handler = logging.StreamHandler(sys.stdout)
         self.handler.setLevel(mode)
-        formatter = logging.Formatter("%(levelname)s - %(message)s")
+        formatter = logging.Formatter("%(asctime)s %(message)s", "[%H:%M:%S]")
         self.handler.setFormatter(formatter)
         self.root.addHandler(self.handler)
 
