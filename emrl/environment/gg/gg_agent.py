@@ -11,14 +11,10 @@ HEARER = "HEARER"
 
 class Agent:
     def __init__(self, cfg, world):
+        self.cfg = cfg
         self.id = make_id("AG")
         self.lexicon = Lexicon(cfg)
         self.world = world
-        self.learning_rate = cfg.LEARNING_RATE
-        self.eps_greedy = cfg.EPS_GREEDY
-        self.reward_success = cfg.REWARD_SUCCESS
-        self.reward_failure = cfg.REWARD_FAILURE
-        self.epsilon_failure = cfg.EPSILON_FAILURE
 
     def reset(self, context, topic):
         self.context = context
@@ -87,7 +83,7 @@ class Agent:
         actions = self.lexicon.get_actions_produce(state)
         actions = self.find_in_context(actions)
         if actions:
-            best_action = self.epsilon_greedy(actions, eps=self.eps_greedy)
+            best_action = self.epsilon_greedy(actions, eps=self.cfg.LEARNING_RATE)
             return best_action.form
         else:
             return None
@@ -128,7 +124,7 @@ class Agent:
         actions = self.lexicon.get_actions_produce(meanings)
         if actions:
             # select action with highest q-value
-            best_action = self.epsilon_greedy(actions, eps=self.eps_greedy)
+            best_action = self.epsilon_greedy(actions, eps=self.cfg.LEARNING_RATE)
         else:
             # invent a new sa_pair for the meaning
             meaning = self.invention_strategy(meanings)
@@ -180,25 +176,25 @@ class Agent:
         """Updates the q-value of the given state/action pair."""
         old_q = sa_pair.q_val
         # no discount as it is a bandit
-        new_q = old_q + self.learning_rate * (reward - old_q)
+        new_q = old_q + self.cfg.LEARNING_RATE * (reward - old_q)
         sa_pair.q_val = new_q
-        if sa_pair.q_val < self.reward_failure + self.epsilon_failure:
+        if sa_pair.q_val < self.cfg.REWARD_FAILURE + self.cfg.EPSILON_FAILURE:
             self.lexicon.remove_sa_pair(sa_pair)
 
     def lateral_inhibition(self, primary_cxn):
         sa_pairs = self.lexicon.get_actions_produce(primary_cxn.meaning)
         sa_pairs.remove(primary_cxn)
         for sa_pair in sa_pairs:
-            self.update_q(sa_pair, self.reward_failure)
+            self.update_q(sa_pair, self.cfg.REWARD_FAILURE)
 
     def align(self):
         """Align the q-table of the agent with the given reward if and only if
         an action was chosen (applied_sa_pair)."""
         if self.applied_sa_pair and self.communicative_success:
-            self.update_q(self.applied_sa_pair, self.reward_success)
+            self.update_q(self.applied_sa_pair, self.cfg.REWARD_SUCCESS)
             # self.lateral_inhibition(self.applied_sa_pair)
         elif self.applied_sa_pair:
-            self.update_q(self.applied_sa_pair, self.reward_failure)
+            self.update_q(self.applied_sa_pair, self.cfg.REWARD_FAILURE)
 
     def __str__(self):
         return f"Agent id: {self.id}"
