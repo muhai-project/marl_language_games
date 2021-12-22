@@ -169,10 +169,7 @@ class Monitors:
             avgs.append(avg)
 
         # average forms per meaning for the population
-        if avgs:
-            event = sum(avgs) / len(avgs)
-        else:
-            event = 0
+        event = sum(avgs) / len(avgs)
         monitor = self.monitors["forms-per-meaning"]
         self.add_event_to_trial(monitor, trial, event)
 
@@ -199,10 +196,7 @@ class Monitors:
             avgs.append(avg)
 
         # average forms per meaning for the population
-        if avgs:
-            event = sum(avgs) / len(avgs)
-        else:
-            event = 0
+        event = sum(avgs) / len(avgs)
         monitor = self.monitors["meanings-per-form"]
         self.add_event_to_trial(monitor, trial, event)
 
