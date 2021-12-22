@@ -3,7 +3,6 @@ from easydict import EasyDict as edict
 
 from emrl.environment.lexicon import SAPair
 from emrl.experiment.experiment import Experiment
-from emrl.experiment.monitors import Monitors
 
 
 @pytest.fixture
@@ -273,7 +272,7 @@ def test_lexicon_similarity_diff(exp):
     assert monitors.lexicon_similarity(lex1, lex2) == 0.8
 
 
-def test_lexicon_similarity_diff(exp):
+def test_lexicon_similarity_completely_diff(exp):
     monitors = exp.monitors
     lex1 = [
         SAPair("m1", "f1", initial_value=0.5),
