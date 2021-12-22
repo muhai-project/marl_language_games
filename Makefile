@@ -43,6 +43,7 @@ clean:
 	rm -fr .pytest_cache
 
 	rm -r -f data/log/*
+	rm -r -f htmlcov
 	clear
 	
 ## Set up conda environment step 1 - environment.yml
