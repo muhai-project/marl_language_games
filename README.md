@@ -92,4 +92,4 @@ Once the experiments have completed, plots can be generated for the logged exper
 
 ## Unit tests
 
-This repository provides unit tests (with pytest) for the `emrl` package in the `tests/` folder. The conda environment associated with the `environment.yml` installs `pytest` and `coverage`. The tests can be ran with `pytest --cov-config=setup.cfg` in the command-line. Afterwards, a code coverage report is available in `htmlcov`.
+This repository provides unit tests (with pytest) for the `emrl` package in the `tests/` folder. The conda environment associated with the `environment.yml` installs `pytest` and `coverage`. The tests can be run with `pytest --cov-config=setup.cfg` in the command-line. Afterwards, a code coverage report is available in `htmlcov`.
