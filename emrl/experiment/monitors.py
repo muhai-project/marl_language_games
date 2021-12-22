@@ -87,7 +87,7 @@ class Monitors:
             lex_size = self.calculate_lexicon_size(agent)
             sizes.append(lex_size)
 
-        event = int(sum(sizes) / len(sizes))  # average lexicon size
+        event = sum(sizes) / len(sizes)  # average lexicon size
         monitor = self.monitors["lexicon-size"]
         self.add_event_to_trial(monitor, trial, event)
 
