@@ -1,5 +1,12 @@
-def write_measure(monitor, fname):
-    """Writes data out to a specified file with a s-expression format required by Babel."""
+def convert_monitor(monitor):
+    """Converts monitor to a string (into s-expression format required by Babel plot engine)
+
+    Args:
+        monitor (list): a list of data to be converted to a string
+
+    Returns:
+        str: s-expression version of the data inside the given monitor
+    """
     out = ""
     for trial in monitor:
         if isinstance(trial[0], bool) or isinstance(trial[0], int):
@@ -12,8 +19,15 @@ def write_measure(monitor, fname):
         out += data
     out = "((" + out + "))"  # add final round brackets
 
+    return out
+
+
+def write_measure(monitor, fname):
+    """Converts and writes data out to a file with a given filename."""
+
+    data = convert_monitor(monitor)
     with open(f"{fname}.lisp", "w") as file:
-        file.write(out)
+        file.write(data)
 
 
 def write_measure_competition(monitor, fname):
