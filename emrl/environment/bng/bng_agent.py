@@ -190,7 +190,6 @@ class Agent:
     def update_q(self, sa_pair, reward):
         """Updates the q-value of the given state/action pair using the interpolated update rule."""
         old_q = sa_pair.q_val
-        # no discount as it is a bandit
         new_q = old_q + self.cfg.LEARNING_RATE * (reward - old_q)
         sa_pair.q_val = new_q
         if sa_pair.q_val < self.cfg.REWARD_FAILURE + self.cfg.EPSILON_FAILURE:
