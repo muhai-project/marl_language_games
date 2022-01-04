@@ -237,9 +237,20 @@ def test_produce_as_hearer():
     assert form == "f3"
     form = agent.produce_as_hearer("m3")
     assert form == "f4"
-    form = agent.produce_as_hearer("m1")
-    assert form is None
     form = agent.produce_as_hearer("m4")
+    assert form is None
+
+
+def test_produce_as_hearer_not_in_context():
+    cfg = edict()
+    cfg.EPS_GREEDY = 0
+    agent = Agent(cfg)
+    agent.context = ["m3", "m5", "m4"]
+    agent.lexicon.q_table = [
+        SAPair("m1", "f1", 1),
+        SAPair("m5", "f1", 6),
+    ]
+    form = agent.produce_as_hearer("m1")
     assert form is None
 
 
