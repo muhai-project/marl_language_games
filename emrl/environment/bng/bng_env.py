@@ -119,6 +119,6 @@ class BasicNamingGameEnv:
         logging.debug(self.hearer.lexicon)
         logging.debug(f" === {self.hearer.id} interpreted {interpretation}")
         if self.speaker.communicative_success:
-            logging.debug(f" ===> FAILURE, hence adopting {utterance} <===")
-        else:
             logging.debug(" ===> SUCCESS <===")
+        else:
+            logging.debug(f" ===> FAILURE, hence adopting {utterance} <===")
