@@ -44,10 +44,7 @@ class Monitors:
                 >= self.exp.cfg.REWARD_FAILURE + self.exp.cfg.EPSILON_FAILURE
             )
         elif self.exp.cfg.UPDATE_RULE == "basic":
-            return (
-                sa_pair.q_val
-                >= self.exp.cfg.REWARD_SUCCESS + self.exp.cfg.EPSILON_FAILURE
-            )
+            return sa_pair.q_val >= self.exp.cfg.EPSILON_FAILURE
 
     def calculate_lexicon_size(self, agent):
         """Calculates the length of the lexicon.
