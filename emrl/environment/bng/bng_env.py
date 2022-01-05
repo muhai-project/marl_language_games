@@ -113,10 +113,10 @@ class BasicNamingGameEnv:
         logging.debug(f" ~~ GAME BETWEEN: {self.speaker.id} - {self.hearer.id} ~~")
         logging.debug(f" ~~ TOPIC: {self.topic} ~~")
         logging.debug(f" === {self.speaker.id} q-table:")
-        logging.debug(self.speaker.lexicon)
+        logging.debug(f"\n{self.speaker.lexicon}")
         logging.debug(f" === {self.speaker.id} uttered {utterance}")
         logging.debug(f" === {self.hearer.id} q-table:")
-        logging.debug(self.hearer.lexicon)
+        logging.debug(f"\n{self.hearer.lexicon}")
         logging.debug(f" === {self.hearer.id} interpreted {interpretation}")
         if self.speaker.communicative_success:
             logging.debug(" ===> SUCCESS <===")
