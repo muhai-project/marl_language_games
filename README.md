@@ -7,17 +7,10 @@ This repository contains the code for Emergent Reinforcement Learning. It studie
     ├── cfg                <- Configurations files for experiments
     │
     ├── data
-    │   ├── external       <- Data from third party sources.
-    │   ├── processed      <- Place logged experiments .
+    │   ├── processed      <- Stores logged experiments long-term.
     │   └── log            <- The original, immutable logged experiments.
     │
-    ├── docs               <- A default Sphinx project; see sphinx-doc.org
-    │
     ├── emrl               <- Source code for use in this project.
-    │
-    ├── models             <- Trained and serialized models, model predictions, or model summaries
-    │
-    ├── notebooks          <- Jupyter notebooks
     │
     ├── scripts            <- Scripts of the emrl package
     │
@@ -83,7 +76,7 @@ Both scripts allow the following command-line args:
 For example, the following command runs the basic naming game experiment with the parameters specified in the configuration file found at `cfg/bng.yml`.
 
 ```
-python scripts/run_experiment.py --cfg cfg/bng.yml
+python scripts/run_experiment.py --cfg cfg/bng.yml --debug --print_every 1
 ```
 
 ## Generate plots
