@@ -139,8 +139,8 @@ def test_keep_value_basic():
 
     assert exp.monitors.keep_value(SAPair("m1", "f1", initial_value=0.5))
     assert exp.monitors.keep_value(SAPair("m1", "f1", initial_value=1))
-    assert exp.monitors.keep_value(SAPair("m1", "f1", initial_value=0.11))
-    assert not exp.monitors.keep_value(SAPair("m1", "f1", initial_value=0.10))
+    assert exp.monitors.keep_value(SAPair("m1", "f1", initial_value=0.1))
+    assert not exp.monitors.keep_value(SAPair("m1", "f1", initial_value=0.009))
     assert not exp.monitors.keep_value(SAPair("m1", "f1", initial_value=0))
 
 
