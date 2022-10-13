@@ -1,4 +1,4 @@
-from emrl.utils.cfg import cfg_from_file
+from marl_language_games.utils.cfg import cfg_from_file
 
 
 def test_bng_cfg():

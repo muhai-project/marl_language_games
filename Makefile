@@ -4,9 +4,9 @@
 
 PROJECT_DIR := $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
 PROFILE = default
-PROJECT_NAME = emergent_rl
+PROJECT_NAME = marl_language_games
 PYTHON_INTERPRETER = python3
-ENVIRONMENT_NAME = emrl
+ENVIRONMENT_NAME = marl_language_games
 ENVIRONMENT_FILE = environment.yml
 
 ifeq (,$(shell which conda))
@@ -42,31 +42,25 @@ clean:
 	rm -fr htmlcov/
 	rm -fr .pytest_cache
 
-	rm -r -f data/log/*
+	rm -r -f data/
 	rm -r -f htmlcov
 	clear
 	
-## Set up conda environment step 1 - environment.yml
-install_env1:
-ifeq (True,$(HAS_CONDA))
-		conda env create -f $(ENVIRONMENT_FILE)
-endif
+## Set up conda environment [step 1]
+install_conda_env:
+	conda env create -f $(ENVIRONMENT_FILE)
 
-## Set up conda environment step 2 - install local pkg
-install_env2:
+## Set up conda environment [step 2] 
+install_package:
 	$(src_pip_install)	
 
-## Create or update dependency list for conda env - creates environment.yml
-create_dep_yml:
-ifeq (True,$(HAS_CONDA))
-		conda env export -n $(ENVIRONMENT_NAME) --no-builds | grep -v "prefix" > environment.yml
-endif
+## Create or update dependency list of the environment
+update_dependency_list:
+	conda env export -n $(ENVIRONMENT_NAME) --no-builds | grep -v "prefix" > environment.yml
 
 ## Delete conda environment
 remove_env:
-ifeq (True,$(HAS_CONDA))
-		conda env remove -n $(ENVIRONMENT_NAME)
-endif
+	conda env remove -n $(ENVIRONMENT_NAME)
 
 #################################################################################
 # Self Documenting Commands                                                     #

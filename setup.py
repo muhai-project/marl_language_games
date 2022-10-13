@@ -1,7 +1,7 @@
 from setuptools import find_packages, setup
 
 setup(
-    name="emrl",
+    name="marl_language_games",
     version="0.1.0",
     url="https://gitlab.ai.vub.ac.be/ehai/emergent-rl",
     author="Jérôme Botoko",

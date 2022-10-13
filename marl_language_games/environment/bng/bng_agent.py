@@ -2,8 +2,8 @@ import random
 
 import numpy as np
 
-from emrl.environment.lexicon import Lexicon
-from emrl.utils.invention import make_id
+from marl_language_games.environment.lexicon import Lexicon
+from marl_language_games.utils.invention import make_id
 
 SPEAKER = "SPEAKER"
 HEARER = "HEARER"

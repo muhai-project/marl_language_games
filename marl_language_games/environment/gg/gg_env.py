@@ -5,8 +5,8 @@ from collections import defaultdict
 import numpy as np
 from prettytable import PrettyTable
 
-from emrl.environment.gg.gg_agent import HEARER, SPEAKER, Agent
-from emrl.utils.invention import make_id
+from marl_language_games.environment.gg.gg_agent import HEARER, SPEAKER, Agent
+from marl_language_games.utils.invention import make_id
 
 SUCCESS = 0
 FAIL_THEN_ADOPT = 1

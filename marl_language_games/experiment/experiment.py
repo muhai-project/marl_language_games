@@ -2,9 +2,9 @@ import logging
 
 from tqdm import tqdm
 
-from emrl.environment.bng.bng_env import BasicNamingGameEnv
-from emrl.environment.gg.gg_env import GuessingGameEnv
-from emrl.experiment.monitors import Monitors
+from marl_language_games.environment.bng.bng_env import BasicNamingGameEnv
+from marl_language_games.environment.gg.gg_env import GuessingGameEnv
+from marl_language_games.experiment.monitors import Monitors
 
 
 class Experiment:

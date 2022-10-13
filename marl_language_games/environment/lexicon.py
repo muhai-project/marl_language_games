@@ -2,7 +2,7 @@ from collections import defaultdict
 
 from prettytable import PrettyTable
 
-from emrl.utils.invention import invent
+from marl_language_games.utils.invention import invent
 
 
 class SAPair:

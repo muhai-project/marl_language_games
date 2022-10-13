@@ -1,20 +1,18 @@
-# Emergent Reinforcement Learning (EMRL)
+# Multi-agent Reinforcement Learning (MARL) Language Games
 
-This repository contains the code for Emergent Reinforcement Learning. It studies emergent communication through the multi-agent reinforcement learning paradigm.
+This repository contains the code for 'Multi-agent Reinforcement Learning Language games'. It studies emergent communication through the multi-agent reinforcement learning framework and the language games paradigm.
 
 ## Project Organization
 
     ├── cfg                <- Configurations files for experiments
     │
-    ├── data
-    │   ├── processed      <- Stores logged experiments long-term.
-    │   └── log            <- The original, immutable logged experiments.
+    ├── data               <- The original, immutable logged experiments.
     │
-    ├── emrl               <- Source code for use in this project.
+    ├── marl_language_games <- Source code for use in this project.
     │
-    ├── scripts            <- Scripts of the emrl package
+    ├── scripts            <- Scripts of the marl_language_games package
     │
-    ├── tests              <- Unit tests for emrl package
+    ├── tests              <- Unit tests for marl_language_games package
     │
     ├── Makefile           <- Makefile with commands to create conda env
     │
@@ -22,7 +20,7 @@ This repository contains the code for Emergent Reinforcement Learning. It studie
     │
     ├── environment.yml    <- The project's package dependency list for reproducing the environment
     │
-    ├── setup.py           <- makes project pip installable (pip install -e .) so emrl can be imported
+    ├── setup.py           <- makes project pip installable (pip install -e .) so marl_language_games can be imported
     │
     └── setup.cfg          <- pytest, flake8, black and isort settings
 
@@ -32,20 +30,20 @@ Anaconda is probably the fastest way to get up and running with Python environme
 
 Download Miniconda from [this website](https://docs.conda.io/en/latest/miniconda.html) and follow the installation instructions. If you are prompted to add Miniconda to your `.bash_profile` or `.zshrc`, accept. For the changes to take effect and use `conda` from the command line, you must restart the Terminal. At the time of writing, the Miniconda website suggests to install Miniconda with Python 3.7.
 
-The `environment.yml` file presents in this repository makes it easy to recreate the `emrl` conda environment that was used to develop this project. This file lists all necessary packages and their version numbers. You can use the Makefile to setup this environment.
+The `environment.yml` file presents in this repository makes it easy to recreate the `marl_language_games` conda environment that was used to develop this project. This file lists all necessary packages and their version numbers. You can use the Makefile to setup this environment.
 
-1. To recreate the `emrl` conda environment that was used to develop this project, run:
-   - `make install_env1`
+1. To recreate the `marl_language_games` conda environment that was used to develop this project, run:
+   - `make install_conda_env`
 2. If the environment was successfully created, you can activate it by running
-   - `conda activate emrl`
-   - You should see the prompt of your Terminal change from `(base)` to `(emrl)`.
-3. Then to install the `emrl` package into the newly create `(emrl)` environment, run:
-   - `make install_env2`
-   - You should see the `emrl` package when listing all dependencies of the environment through `conda list`.
+   - `conda activate marl_language_games`
+   - You should see the prompt of your Terminal change from `(base)` to `(marl_language_games)`.
+3. Then to install the `marl_language_games` package into the newly create `(marl_language_games)` environment, run:
+   - `make install_package`
+   - You should see the `marl_language_games` package when listing all dependencies of the environment through `conda list`.
 
 ## Running an experiment
 
-Make sure that the `emrl` environment has been setup and activated.
+Make sure that the `marl_language_games` environment has been setup and activated.
 
 Two scripts are available in the directory `scripts` at the moment:
 
@@ -73,10 +71,10 @@ Both scripts allow the following command-line args:
   - requires `--debug` flag to be set
   - logs every x-th communicative interaction (and prints to stdout)
 
-For example, the following command runs the basic naming game experiment with the parameters specified in the configuration file found at `cfg/bng.yml`.
+For example, the following command runs the basic naming game experiment with the parameters specified in the configuration file found at `cfg/config.yml`.
 
 ```
-python scripts/run_experiment.py --cfg cfg/bng.yml --debug --print_every 1
+python scripts/run_experiment.py --cfg cfg/config.yml --debug --print_every 5000
 ```
 
 ## Generate plots
@@ -85,4 +83,4 @@ Once the experiments have completed, plots can be generated for the logged exper
 
 ## Unit tests
 
-This repository provides unit tests (with pytest) for the `emrl` package in the `tests/` folder. The conda environment associated with the `environment.yml` installs `pytest` and `coverage`. The tests can be run with `pytest --cov-config=setup.cfg` in the command-line. Afterwards, a code coverage report is available in `htmlcov`.
+This repository provides unit tests (with pytest) for the `marl_language_games` package in the `tests/` folder. The conda environment associated with the `environment.yml` installs `pytest`. The tests can be run with `pytest` in the command-line.

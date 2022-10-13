@@ -1,4 +1,4 @@
-from emrl.utils.convert_data import convert_monitor
+from marl_language_games.utils.convert_data import convert_monitor
 
 
 def test_convert_monitor_int():

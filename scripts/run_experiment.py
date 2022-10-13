@@ -1,6 +1,6 @@
-from emrl.experiment.experiment import Experiment
-from emrl.utils.cfg import cfg_from_file, parse_args
-from emrl.utils.log import create_logdir, log_experiment
+from marl_language_games.experiment.experiment import Experiment
+from marl_language_games.utils.cfg import cfg_from_file, parse_args
+from marl_language_games.utils.log import create_logdir, log_experiment
 
 if __name__ == "__main__":
     args = parse_args()

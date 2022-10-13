@@ -3,8 +3,8 @@ import random
 
 import numpy as np
 
-from emrl.environment.bng.bng_agent import HEARER, SPEAKER, Agent
-from emrl.utils.invention import make_id
+from marl_language_games.environment.bng.bng_agent import HEARER, SPEAKER, Agent
+from marl_language_games.utils.invention import make_id
 
 
 class World:

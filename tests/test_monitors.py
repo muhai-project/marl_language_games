@@ -1,8 +1,8 @@
 import pytest
 from easydict import EasyDict as edict
 
-from emrl.environment.lexicon import SAPair
-from emrl.experiment.experiment import Experiment
+from marl_language_games.environment.lexicon import SAPair
+from marl_language_games.experiment.experiment import Experiment
 
 
 @pytest.fixture

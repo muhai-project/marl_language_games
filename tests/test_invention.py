@@ -1,4 +1,4 @@
-from emrl.utils.invention import ids, invent, make_id
+from marl_language_games.utils.invention import ids, invent, make_id
 
 
 def test_make_id():
