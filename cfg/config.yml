@@ -1,0 +1,22 @@
+# This configuration file specifies the parameters of the experiments
+#    of the paper 'Re-conceptualising the Language Game Paradigm in the Framework of Multi-Agent Reinforcement Learning'
+
+# EXPERIMENT PARAMETERS
+ENV: "bng"
+TRIALS: 10
+EPISODES: 20000
+CONTEXT_MIN_SIZE: 5
+CONTEXT_MAX_SIZE: 5
+WORLD_SIZE: 10
+POPULATION_SIZE: 10
+
+UPDATE_RULE: "interpolated"
+LEARNING_RATE: 0.5 # Determines to what extent newly acquired info overrides old q-value
+EPS_GREEDY: 0 # deterministic, always choose action a with highest q-value
+INITIAL_Q_VALUE: 0.5 # default q-value
+REWARD_SUCCESS: 1 # reward for communicative success
+REWARD_FAILURE: 0 # reward for failing a communicative interaction
+EPSILON_FAILURE: 0.01 # margin of REWARD_FAILURE at which a state-action pair is deleted from the lexicon
+LATERAL_INHIBITION: True # punishing competitors of a successful application of a state-action pair
+DELETE_SA_PAIR: False # delete sa_pairs with a low q-value (ifo of REWARD_FAILURE and EPSILON_FAILURE)
+IGNORE_LOW_SA_PAIR: True # ignore sa_pairs with a low q-value (ifo of REWARD_FAILURE and EPSILON_FAILURE) when logging monitors
