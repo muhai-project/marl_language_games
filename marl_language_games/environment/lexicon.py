@@ -9,7 +9,7 @@ class SAPair:
     def __init__(self, meaning, form, initial_value=0):
         self.meaning = meaning
         self.form = form
-        self.q_val = initial_value
+        self.q_value = initial_value
 
     def __hash__(self):
         return hash((self.meaning, self.form))
@@ -18,11 +18,11 @@ class SAPair:
         return self.meaning == other.meaning and self.form == other.form
 
     def __repr__(self):
-        return f"Construction: ({self.meaning} - {self.form}) -> {self.q_val}"
+        return f"SAPair: ({self.meaning} - {self.form}) -> {self.q_value}"
 
 
 class Lexicon:
-    """Naive implementation of a lexicon as a list of constructions."""
+    """The bidirectional dynamic Q-table implemented as a list of state-action pairs."""
 
     def __init__(self, cfg):
         self.cfg = cfg
@@ -37,7 +37,7 @@ class Lexicon:
         Returns:
             sa_pair: the newly added state/action pair of the lexicon
         """
-        new_sa_pair = SAPair(state, invent(), self.cfg.INITIAL_Q_VAL)
+        new_sa_pair = SAPair(state, invent(), self.cfg.INITIAL_Q_VALUE)
         self.q_table.append(new_sa_pair)
         return new_sa_pair
 
@@ -53,8 +53,8 @@ class Lexicon:
         Returns:
             sa_pair: the newly added state/action pair of the lexicon
         """
-        new_sa_pair = SAPair(meaning, form, self.cfg.INITIAL_Q_VAL)
-        # uses Construction __eq__ to determine if member
+        new_sa_pair = SAPair(meaning, form, self.cfg.INITIAL_Q_VALUE)
+        # uses SAPair __eq__ to determine if member
         if new_sa_pair not in self.q_table:
             self.q_table.append(new_sa_pair)
         return new_sa_pair
@@ -96,7 +96,7 @@ class Lexicon:
         return len(self.q_table)
 
     def __repr__(self):
-        """Returns a string representation of the lexicon as a 2 dimensional q-table."""
+        """Returns a string representation of the lexicon as a bidirectional dynamic q-table."""
         tbl = PrettyTable()
 
         forms = sorted(list(set([cxn.form for cxn in self.q_table])))
@@ -115,7 +115,7 @@ class Lexicon:
             row = [""] * len(forms)
             for cxn in cxns:
                 idx = forms[cxn.form]
-                row[idx] = round(cxn.q_val, 3)
+                row[idx] = round(cxn.q_value, 3)
             row.insert(0, meaning)
             rows.append(row)
 

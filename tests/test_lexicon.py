@@ -1,9 +1,7 @@
 from marl_language_games.environment.lexicon import Lexicon
 from marl_language_games.utils.cfg import cfg_from_file
 
-cfg = cfg_from_file("cfg/bng.yml")  # TODO only tests for bng cfg?!
-# http://qualityisspeed.blogspot.com/2015/02/the-dependency-elimination-principle-a-canonical-example.html
-
+cfg = cfg_from_file("cfg/config.yml")
 
 def test_invent_sa_pair():
     lex = Lexicon(cfg)
@@ -13,7 +11,7 @@ def test_invent_sa_pair():
     assert len(lex) == 1 and lex.q_table[0] == new_sa_pair
     assert new_sa_pair.meaning == meaning
     assert type(new_sa_pair.form) is str
-    assert new_sa_pair.q_val == cfg.INITIAL_Q_VAL
+    assert new_sa_pair.q_value == cfg.INITIAL_Q_VALUE
 
 
 def test_adopt_sa_pair():
@@ -23,7 +21,7 @@ def test_adopt_sa_pair():
     new_sa_pair1 = lex.adopt_sa_pair(meaning1, form1)
     assert len(lex) == 1 and lex.q_table[0] == new_sa_pair1
     assert new_sa_pair1.meaning == meaning1 and new_sa_pair1.form == form1
-    assert new_sa_pair1.q_val == cfg.INITIAL_Q_VAL
+    assert new_sa_pair1.q_value == cfg.INITIAL_Q_VALUE
 
     meaning2 = "m2", "f2"
     new_sa_pair2 = lex.adopt_sa_pair(meaning2, form1)
@@ -102,7 +100,7 @@ def test_lex_repr():
         assert form in lex_repr
 
     first = lex.q_table[0]
-    first.q_val = 500.0156
-    assert lex.q_table[0].q_val == 500.0156
+    first.q_value = 500.0156
+    assert lex.q_table[0].q_value == 500.0156
     lex_repr = str(lex)
     assert "500.016" in lex_repr

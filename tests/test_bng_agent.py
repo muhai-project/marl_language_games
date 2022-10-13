@@ -33,18 +33,18 @@ def test_reset():
 )
 def test_adopt_one_sa_pair(topic, utterance):
     cfg = edict()
-    cfg.INITIAL_Q_VAL = 0.5
+    cfg.INITIAL_Q_VALUE = 0.5
     agent = Agent(cfg)
     agent.adopt(topic, utterance)
     assert len(agent.lexicon) == 1
     assert agent.lexicon.q_table[0].meaning == topic
     assert agent.lexicon.q_table[0].form == utterance
-    assert agent.lexicon.q_table[0].q_val == cfg.INITIAL_Q_VAL
+    assert agent.lexicon.q_table[0].q_value == cfg.INITIAL_Q_VALUE
 
 
 def test_adopt_repeat():
     cfg = edict()
-    cfg.INITIAL_Q_VAL = 0.5
+    cfg.INITIAL_Q_VALUE = 0.5
     topic, utterance = "m1", "f1"
     agent = Agent(cfg)
     agent.adopt(topic, utterance)
@@ -55,7 +55,7 @@ def test_adopt_repeat():
 
 def test_adopt_multiple_sa_pairs():
     cfg = edict()
-    cfg.INITIAL_Q_VAL = 0.5
+    cfg.INITIAL_Q_VALUE = 0.5
     agent = Agent(cfg)
     meanings = ["m1", "m2", "m3", "m4", "m5"]
     forms = ["f1", "f2", "f3", "f4", "f5"]
@@ -66,7 +66,7 @@ def test_adopt_multiple_sa_pairs():
     for idx, (topic, utterance) in enumerate(zip(meanings, forms), 0):
         assert agent.lexicon.q_table[idx].meaning == topic
         assert agent.lexicon.q_table[idx].form == utterance
-        assert agent.lexicon.q_table[idx].q_val == cfg.INITIAL_Q_VAL
+        assert agent.lexicon.q_table[idx].q_value == cfg.INITIAL_Q_VALUE
 
 
 def test_epsilon_greedy_exploit():
@@ -77,7 +77,7 @@ def test_epsilon_greedy_exploit():
     random.shuffle(actions)
     best_action = agent.epsilon_greedy(actions, eps=0)
     assert SAPair(4, 4) == best_action
-    assert best_action.q_val == 4
+    assert best_action.q_value == 4
 
 
 def test_epsilon_greedy_exploit_equal():
@@ -95,7 +95,7 @@ def test_epsilon_greedy_exploit_equal():
     random.shuffle(actions)
     best_action = agent.epsilon_greedy(actions, eps=0)
     assert SAPair("m1", "f3") == best_action
-    assert best_action.q_val == 101
+    assert best_action.q_value == 101
 
 
 def test_find_in_context_empty():
@@ -131,14 +131,13 @@ def test_find_in_context_full():
 
 def test_policy_speaker_invent():
     cfg = edict()
-    cfg.INITIAL_Q_VAL = 0.5
+    cfg.INITIAL_Q_VALUE = 0.5
     agent = Agent(cfg)
     assert len(agent.lexicon) == 0
     form, invented = agent.policy(SPEAKER, "m1")
     assert len(agent.lexicon) == 1
     assert agent.lexicon.q_table[0].form == form
-    assert agent.lexicon.q_table[0].q_val == cfg.INITIAL_Q_VAL
-    assert invented
+    assert agent.lexicon.q_table[0].q_value == cfg.INITIAL_Q_VALUE
 
 
 def test_policy_speaker_exploit():
@@ -182,7 +181,7 @@ def test_policy_hearer_comprehend_exploit():
     meaning = agent.policy(HEARER, "f1")
     assert meaning == "m5"
     assert agent.applied_sa_pair == SAPair("m5", "f1")
-    assert agent.applied_sa_pair.q_val == 6
+    assert agent.applied_sa_pair.q_value == 6
 
 
 def test_produce_as_hearer_empty_with_context():
@@ -190,7 +189,7 @@ def test_produce_as_hearer_empty_with_context():
     agent = Agent(cfg)
     agent.context = ["m1", "m6"]
     assert len(agent.lexicon) == 0
-    form = agent.produce_as_hearer("m6")
+    form = agent.re_entrance_hearer("m6")
     assert form is None
 
 
@@ -199,7 +198,7 @@ def test_produce_as_hearer_empty_with_no_context():
     agent = Agent(cfg)
     agent.context = ["m1", "m6"]
     assert len(agent.lexicon) == 0
-    form = agent.produce_as_hearer("m3")
+    form = agent.re_entrance_hearer("m3")
     assert form is None
 
 
@@ -216,7 +215,7 @@ def test_produce_as_hearer_context_no_match():
         SAPair("m3", "f4", 6),
         SAPair("m3", "f1", 3),
     ]
-    form = agent.produce_as_hearer("m5")
+    form = agent.re_entrance_hearer("m5")
     assert form is None
 
 
@@ -233,11 +232,11 @@ def test_produce_as_hearer():
         SAPair("m3", "f4", 6),
         SAPair("m3", "f1", 3),
     ]
-    form = agent.produce_as_hearer("m5")
+    form = agent.re_entrance_hearer("m5")
     assert form == "f3"
-    form = agent.produce_as_hearer("m3")
+    form = agent.re_entrance_hearer("m3")
     assert form == "f4"
-    form = agent.produce_as_hearer("m4")
+    form = agent.re_entrance_hearer("m4")
     assert form is None
 
 
@@ -250,7 +249,7 @@ def test_produce_as_hearer_not_in_context():
         SAPair("m1", "f1", 1),
         SAPair("m5", "f1", 6),
     ]
-    form = agent.produce_as_hearer("m1")
+    form = agent.re_entrance_hearer("m1")
     assert form is None
 
 
@@ -304,23 +303,23 @@ def test_update_invalid_rule():
 def test_update_int_only_update_one():
     cfg = edict()
     cfg.UPDATE_RULE = "interpolated"
-    cfg.INITIAL_Q_VAL = 0
+    cfg.INITIAL_Q_VALUE = 0
     cfg.LEARNING_RATE = 0.1
     cfg.REWARD_FAILURE = -1
     cfg.EPSILON_FAILURE = 0.01
     agent = Agent(cfg)
     agent.lexicon.q_table = [
-        SAPair("m1", "f1", cfg.INITIAL_Q_VAL),
-        SAPair("m2", "f1", cfg.INITIAL_Q_VAL),
-        SAPair("m3", "f2", cfg.INITIAL_Q_VAL),
+        SAPair("m1", "f1", cfg.INITIAL_Q_VALUE),
+        SAPair("m2", "f1", cfg.INITIAL_Q_VALUE),
+        SAPair("m3", "f2", cfg.INITIAL_Q_VALUE),
     ]
-    assert agent.lexicon.q_table[1].q_val == cfg.INITIAL_Q_VAL
-    assert agent.lexicon.q_table[1].q_val == cfg.INITIAL_Q_VAL
-    assert agent.lexicon.q_table[1].q_val == cfg.INITIAL_Q_VAL
+    assert agent.lexicon.q_table[1].q_value == cfg.INITIAL_Q_VALUE
+    assert agent.lexicon.q_table[1].q_value == cfg.INITIAL_Q_VALUE
+    assert agent.lexicon.q_table[1].q_value == cfg.INITIAL_Q_VALUE
     agent.update(agent.lexicon.q_table[1], reward=1)
-    assert agent.lexicon.q_table[0].q_val == cfg.INITIAL_Q_VAL
-    assert agent.lexicon.q_table[1].q_val == 0.1
-    assert agent.lexicon.q_table[2].q_val == cfg.INITIAL_Q_VAL
+    assert agent.lexicon.q_table[0].q_value == cfg.INITIAL_Q_VALUE
+    assert agent.lexicon.q_table[1].q_value == 0.1
+    assert agent.lexicon.q_table[2].q_value == cfg.INITIAL_Q_VALUE
 
 
 def test_update_int_repeated():
@@ -335,30 +334,30 @@ def test_update_int_repeated():
         SAPair("m2", "f1", 0),
         SAPair("m3", "f2", 0),
     ]
-    assert agent.lexicon.q_table[1].q_val == 0
+    assert agent.lexicon.q_table[1].q_value == 0
     agent.update(agent.lexicon.q_table[1], reward=1)
-    assert agent.lexicon.q_table[1].q_val == 0.1
+    assert agent.lexicon.q_table[1].q_value == 0.1
     agent.update(agent.lexicon.q_table[1], reward=1)
-    assert agent.lexicon.q_table[1].q_val == 0.19
+    assert agent.lexicon.q_table[1].q_value == 0.19
     agent.update(agent.lexicon.q_table[1], reward=-1)
-    assert round(agent.lexicon.q_table[1].q_val, 3) == 0.071
+    assert round(agent.lexicon.q_table[1].q_value, 3) == 0.071
 
 
 def test_update_int_deletion():
     cfg = edict()
     cfg.UPDATE_RULE = "interpolated"
-    cfg.INITIAL_Q_VAL = 0
+    cfg.INITIAL_Q_VALUE = 0
     cfg.LEARNING_RATE = 0.5
     cfg.REWARD_FAILURE = -1
     cfg.EPSILON_FAILURE = 0.01
     cfg.DELETE_SA_PAIR = True
     agent = Agent(cfg)
     agent.lexicon.q_table = [
-        SAPair("m1", "f1", cfg.INITIAL_Q_VAL),
-        SAPair("m2", "f1", cfg.INITIAL_Q_VAL),
-        SAPair("m3", "f2", cfg.INITIAL_Q_VAL),
+        SAPair("m1", "f1", cfg.INITIAL_Q_VALUE),
+        SAPair("m2", "f1", cfg.INITIAL_Q_VALUE),
+        SAPair("m3", "f2", cfg.INITIAL_Q_VALUE),
     ]
-    assert agent.lexicon.q_table[1].q_val == cfg.INITIAL_Q_VAL
+    assert agent.lexicon.q_table[1].q_value == cfg.INITIAL_Q_VALUE
     for i in range(50):
         agent.update(agent.lexicon.q_table[1], reward=-1)
         if len(agent.lexicon) == 2:
@@ -368,7 +367,7 @@ def test_update_int_deletion():
 
 def test_update_basic_only_update_one():
     cfg = edict()
-    cfg.INITIAL_Q_VAL = 0.5
+    cfg.INITIAL_Q_VALUE = 0.5
     cfg.UPDATE_RULE = "basic"
     agent = Agent(cfg)
     agent.lexicon.q_table = [
@@ -376,54 +375,54 @@ def test_update_basic_only_update_one():
         SAPair("m2", "f1", 0.5),
         SAPair("m3", "f2", 0.5),
     ]
-    assert agent.lexicon.q_table[1].q_val == cfg.INITIAL_Q_VAL
-    assert agent.lexicon.q_table[1].q_val == cfg.INITIAL_Q_VAL
-    assert agent.lexicon.q_table[1].q_val == cfg.INITIAL_Q_VAL
+    assert agent.lexicon.q_table[1].q_value == cfg.INITIAL_Q_VALUE
+    assert agent.lexicon.q_table[1].q_value == cfg.INITIAL_Q_VALUE
+    assert agent.lexicon.q_table[1].q_value == cfg.INITIAL_Q_VALUE
     agent.update(agent.lexicon.q_table[1], reward=0.3)
-    assert agent.lexicon.q_table[0].q_val == cfg.INITIAL_Q_VAL
-    assert agent.lexicon.q_table[1].q_val == 0.8
-    assert agent.lexicon.q_table[2].q_val == cfg.INITIAL_Q_VAL
+    assert agent.lexicon.q_table[0].q_value == cfg.INITIAL_Q_VALUE
+    assert agent.lexicon.q_table[1].q_value == 0.8
+    assert agent.lexicon.q_table[2].q_value == cfg.INITIAL_Q_VALUE
 
 
 def test_update_basic_repeated_up():
     cfg = edict()
-    cfg.INITIAL_Q_VAL = 0.5
+    cfg.INITIAL_Q_VALUE = 0.5
     cfg.UPDATE_RULE = "basic"
     agent = Agent(cfg)
     agent.lexicon.q_table = [
-        SAPair("m1", "f1", cfg.INITIAL_Q_VAL),
-        SAPair("m2", "f1", cfg.INITIAL_Q_VAL),
-        SAPair("m3", "f2", cfg.INITIAL_Q_VAL),
+        SAPair("m1", "f1", cfg.INITIAL_Q_VALUE),
+        SAPair("m2", "f1", cfg.INITIAL_Q_VALUE),
+        SAPair("m3", "f2", cfg.INITIAL_Q_VALUE),
     ]
-    assert agent.lexicon.q_table[1].q_val == cfg.INITIAL_Q_VAL
+    assert agent.lexicon.q_table[1].q_value == cfg.INITIAL_Q_VALUE
     agent.update(agent.lexicon.q_table[1], reward=0.25)
-    assert agent.lexicon.q_table[1].q_val == 0.75
+    assert agent.lexicon.q_table[1].q_value == 0.75
     agent.update(agent.lexicon.q_table[1], reward=0.25)
-    assert agent.lexicon.q_table[1].q_val == 1
+    assert agent.lexicon.q_table[1].q_value == 1
     agent.update(agent.lexicon.q_table[1], reward=0.25)
-    assert agent.lexicon.q_table[1].q_val == 1
+    assert agent.lexicon.q_table[1].q_value == 1
 
 
 def test_update_basic_deletion():
     cfg = edict()
-    cfg.INITIAL_Q_VAL = 0.5
+    cfg.INITIAL_Q_VALUE = 0.5
     cfg.UPDATE_RULE = "basic"
     cfg.DELETE_SA_PAIR = True
     agent = Agent(cfg)
     agent.lexicon.q_table = [
-        SAPair("m1", "f1", cfg.INITIAL_Q_VAL),
-        SAPair("m2", "f1", cfg.INITIAL_Q_VAL),
-        SAPair("m3", "f2", cfg.INITIAL_Q_VAL),
+        SAPair("m1", "f1", cfg.INITIAL_Q_VALUE),
+        SAPair("m2", "f1", cfg.INITIAL_Q_VALUE),
+        SAPair("m3", "f2", cfg.INITIAL_Q_VALUE),
     ]
 
-    assert agent.lexicon.q_table[1].q_val == cfg.INITIAL_Q_VAL
+    assert agent.lexicon.q_table[1].q_value == cfg.INITIAL_Q_VALUE
     for i in range(5):
         agent.update(agent.lexicon.q_table[1], reward=-0.25)
         if len(agent.lexicon) == 2:
             break
     assert len(agent.lexicon) == 2
     for sa_pair in agent.lexicon.q_table:
-        assert sa_pair.q_val == cfg.INITIAL_Q_VAL
+        assert sa_pair.q_value == cfg.INITIAL_Q_VALUE
 
 
 def test_align_LI_no_competitors():
@@ -443,15 +442,15 @@ def test_align_LI_no_competitors():
     agent.applied_sa_pair = agent.lexicon.q_table[1]
     agent.communicative_success = True
 
-    assert agent.lexicon.q_table[0].q_val == 0.5
-    assert agent.lexicon.q_table[1].q_val == 0.5
-    assert agent.lexicon.q_table[2].q_val == 0.6
+    assert agent.lexicon.q_table[0].q_value == 0.5
+    assert agent.lexicon.q_table[1].q_value == 0.5
+    assert agent.lexicon.q_table[2].q_value == 0.6
 
     agent.align()
 
-    assert agent.lexicon.q_table[0].q_val == 0.5
-    assert agent.lexicon.q_table[1].q_val == 0.6
-    assert agent.lexicon.q_table[2].q_val == 0.6
+    assert agent.lexicon.q_table[0].q_value == 0.5
+    assert agent.lexicon.q_table[1].q_value == 0.6
+    assert agent.lexicon.q_table[2].q_value == 0.6
 
 
 def test_align_LI_competitors():
@@ -472,17 +471,17 @@ def test_align_LI_competitors():
     agent.applied_sa_pair = agent.lexicon.q_table[1]
     agent.communicative_success = True
 
-    assert agent.lexicon.q_table[0].q_val == 0.5
-    assert agent.lexicon.q_table[1].q_val == 0.5
-    assert agent.lexicon.q_table[2].q_val == 0.6
-    assert agent.lexicon.q_table[3].q_val == 0.9
+    assert agent.lexicon.q_table[0].q_value == 0.5
+    assert agent.lexicon.q_table[1].q_value == 0.5
+    assert agent.lexicon.q_table[2].q_value == 0.6
+    assert agent.lexicon.q_table[3].q_value == 0.9
 
     agent.align()
 
-    assert agent.lexicon.q_table[0].q_val == 0.5
-    assert agent.lexicon.q_table[1].q_val == 0.6
-    assert agent.lexicon.q_table[2].q_val == 0.6
-    assert agent.lexicon.q_table[3].q_val == 0.8
+    assert agent.lexicon.q_table[0].q_value == 0.5
+    assert agent.lexicon.q_table[1].q_value == 0.6
+    assert agent.lexicon.q_table[2].q_value == 0.6
+    assert agent.lexicon.q_table[3].q_value == 0.8
 
 
 def test_align_fail():
@@ -501,14 +500,14 @@ def test_align_fail():
     agent.applied_sa_pair = agent.lexicon.q_table[1]
     agent.communicative_success = False
 
-    assert agent.lexicon.q_table[0].q_val == 0.5
-    assert agent.lexicon.q_table[1].q_val == 0.5
-    assert agent.lexicon.q_table[2].q_val == 0.6
-    assert agent.lexicon.q_table[3].q_val == 0.9
+    assert agent.lexicon.q_table[0].q_value == 0.5
+    assert agent.lexicon.q_table[1].q_value == 0.5
+    assert agent.lexicon.q_table[2].q_value == 0.6
+    assert agent.lexicon.q_table[3].q_value == 0.9
 
     agent.align()
 
-    assert agent.lexicon.q_table[0].q_val == 0.5
-    assert agent.lexicon.q_table[1].q_val == 0.4
-    assert agent.lexicon.q_table[2].q_val == 0.6
-    assert agent.lexicon.q_table[3].q_val == 0.9
+    assert agent.lexicon.q_table[0].q_value == 0.5
+    assert agent.lexicon.q_table[1].q_value == 0.4
+    assert agent.lexicon.q_table[2].q_value == 0.6
+    assert agent.lexicon.q_table[3].q_value == 0.9

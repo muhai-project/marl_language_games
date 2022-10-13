@@ -1,5 +1,5 @@
 def convert_monitor(monitor):
-    """Converts monitor to a string (into s-expression format required by Babel plot engine)
+    """Converts monitor to a string (into s-expression format)
 
     Args:
         monitor (list): a list of data to be converted to a string
@@ -31,7 +31,7 @@ def write_measure(monitor, fname):
 
 
 def write_measure_competition(monitor, fname):
-    """Writes competition data out to a specified file with a s-expression format required by Babel."""
+    """Writes competition data out to a specified file (into s-expression format)."""
     out = ""
     for key, vals in monitor.items():
         data = ""

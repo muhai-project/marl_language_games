@@ -9,15 +9,15 @@ def make_id(name):
 
     Each input gets its own counter that is incremented each time the function is called.
     To use:
-    >>> make_id("AG")
+    >>> make_id("AGENT")
     #'AG-0
-    >>> make_id("AG")
+    >>> make_id("AGENT")
     #'AG-1
-    >>> make_id("OBJ")
+    >>> make_id("OBJECT")
     #'OBJ-0
-    >>> make_id("AG")
+    >>> make_id("AGENT")
     #'AG-2
-    >>> make_id("OBJ")
+    >>> make_id("OBJECT")
     #'OBJ-1
 
     Args:

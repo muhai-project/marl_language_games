@@ -2,7 +2,7 @@ from marl_language_games.utils.cfg import cfg_from_file
 
 
 def test_bng_cfg():
-    cfg = cfg_from_file("cfg/bng.yml")
+    cfg = cfg_from_file("cfg/config.yml")
     assert cfg.ENV == "bng"
 
     assert cfg.TRIALS >= 1

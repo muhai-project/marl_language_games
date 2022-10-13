@@ -1,7 +1,7 @@
 import os
 from collections import defaultdict
 
-from marl_language_games.utils.convert_data import write_measure, write_measure_competition
+from marl_language_games.utils.write import write_measure, write_measure_competition
 
 
 class Monitors:
@@ -40,11 +40,11 @@ class Monitors:
         """
         if self.exp.cfg.UPDATE_RULE == "interpolated":
             return (
-                sa_pair.q_val
+                sa_pair.q_value
                 >= self.exp.cfg.REWARD_FAILURE + self.exp.cfg.EPSILON_FAILURE
             )
         elif self.exp.cfg.UPDATE_RULE == "basic":
-            return sa_pair.q_val >= self.exp.cfg.EPSILON_FAILURE
+            return sa_pair.q_value >= self.exp.cfg.EPSILON_FAILURE
 
     def calculate_lexicon_size(self, agent):
         """Calculates the length of the lexicon.
@@ -244,7 +244,7 @@ class Monitors:
         events = []
         for sa_pair in agent.lexicon.q_table:
             if meaning == sa_pair.meaning:
-                events.append((sa_pair.form, sa_pair.q_val))
+                events.append((sa_pair.form, sa_pair.q_value))
 
         monitor = self.monitors["form-competition"]
         self.add_event_competition(monitor, events, episode)

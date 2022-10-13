@@ -12,7 +12,7 @@ HEARER = "HEARER"
 class Agent:
     def __init__(self, cfg, world):
         self.cfg = cfg
-        self.id = make_id("AG")
+        self.id = make_id("AGENT")
         self.lexicon = Lexicon(cfg)
         self.world = world
 
@@ -36,7 +36,7 @@ class Agent:
         """
         p = np.random.random()
         if p < (1 - eps):
-            return max(actions, key=lambda sa_pair: sa_pair.q_val)  # todo
+            return max(actions, key=lambda sa_pair: sa_pair.q_value)  # todo
         else:
             return random.sample(actions, k=1)[0]
 
@@ -67,7 +67,7 @@ class Agent:
                 context_actions.append(choice)
         return context_actions
 
-    def produce_as_hearer(self, state):
+    def re_entrance_hearer(self, state):
         """Returns an utterance given the state of the environment as hearer.
 
         The state of the environment corresponds to a row in the q-table of the agent.
@@ -151,8 +151,8 @@ class Agent:
         actions = self.find_in_context(parsed_lexs)
         if actions:
             # selection action with highest q-value
-            # note: given actions are (cxn - topic) tuples, hence path[0].q_val, TODO readability
-            best_action = max(actions, key=lambda path: path[0].q_val)
+            # note: given actions are (cxn - topic) tuples, hence path[0].q_value, TODO readability
+            best_action = max(actions, key=lambda path: path[0].q_value)
             self.applied_sa_pair, self.topic = best_action
         return parsed_lexs
 
@@ -174,11 +174,11 @@ class Agent:
 
     def update_q(self, sa_pair, reward):
         """Updates the q-value of the given state/action pair."""
-        old_q = sa_pair.q_val
+        old_q = sa_pair.q_value
         # no discount as it is a bandit
         new_q = old_q + self.cfg.LEARNING_RATE * (reward - old_q)
-        sa_pair.q_val = new_q
-        if sa_pair.q_val < self.cfg.REWARD_FAILURE + self.cfg.EPSILON_FAILURE:
+        sa_pair.q_value = new_q
+        if sa_pair.q_value < self.cfg.REWARD_FAILURE + self.cfg.EPSILON_FAILURE:
             self.lexicon.remove_sa_pair(sa_pair)
 
     def lateral_inhibition(self, primary_cxn):

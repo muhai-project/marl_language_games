@@ -12,7 +12,7 @@ class World:
 
     def __init__(self, world_size):
         """Initializes a world of objects."""
-        self.objects = [make_id("OBJ") for i in range(world_size)]
+        self.objects = [make_id("OBJECT") for _ in range(world_size)]
 
     def pick_topic(self, context):
         """Given a list of objects (context) returns at random one of the objects as the topic."""
@@ -90,10 +90,10 @@ class BasicNamingGameEnv:
         # hearer chooses action ifo utterance
         interpretation = self.hearer.policy(HEARER, utterance)
 
-        hearer_utterance = self.hearer.produce_as_hearer(self.topic)  # monitoring
+        hearer_utterance = self.hearer.re_entrance_hearer(self.topic)  # monitoring
         self.lexicon_coherence = hearer_utterance == utterance  # monitoring
 
-        # evaluate pulls
+        # evaluate communicative interaction
         if interpretation is None or interpretation != self.topic:
             self.lexicon_change = True  # monitoring
             self.hearer.adopt(self.topic, utterance)

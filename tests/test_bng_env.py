@@ -59,7 +59,7 @@ def environment_and_cfg():
     cfg.CONTEXT_MIN_SIZE = 5
     cfg.CONTEXT_MAX_SIZE = 8
     cfg.EPS_GREEDY = 0
-    cfg.INITIAL_Q_VAL = 0.5
+    cfg.INITIAL_Q_VALUE = 0.5
     cfg.REWARD_SUCCESS = 0.1
     cfg.REWARD_FAILURE = -0.1
     cfg.EPSILON_FAILURE = 0.01
@@ -97,35 +97,34 @@ def test_step_first(environment_and_cfg):
     assert env.speaker.context == env.context
     assert env.hearer.context == env.context
 
-    assert env.speaker.lexicon.q_table[0].q_val == 0.4
-    assert env.hearer.lexicon.q_table[0].q_val == cfg.INITIAL_Q_VAL
+    assert env.speaker.lexicon.q_table[0].q_value == 0.4
+    assert env.hearer.lexicon.q_table[0].q_value == cfg.INITIAL_Q_VALUE
 
 
 def test_step_no_invention_then_adoption(environment_and_cfg):
     env, cfg = environment_and_cfg
     env.speaker.lexicon.q_table = [
-        SAPair(env.topic, "f1", initial_value=cfg.INITIAL_Q_VAL)
+        SAPair(env.topic, "f1", initial_value=cfg.INITIAL_Q_VALUE)
     ]
     env.step(0)
 
-    assert env.lexicon_change is True
     assert env.lexicon_coherence is False
     assert env.speaker.communicative_success is False
     assert env.hearer.communicative_success is False
 
     assert set(env.speaker.lexicon.q_table) == set(env.hearer.lexicon.q_table)
     assert len(env.hearer.lexicon) == 1
-    assert env.hearer.lexicon.q_table[0].q_val == 0.5
-    assert env.speaker.lexicon.q_table[0].q_val == 0.4
+    assert env.hearer.lexicon.q_table[0].q_value == 0.5
+    assert env.speaker.lexicon.q_table[0].q_value == 0.4
 
 
 def test_step_no_invention_no_adoption_no_success(environment_and_cfg):
     env, cfg = environment_and_cfg
     env.speaker.lexicon.q_table = [
-        SAPair(env.topic, "f1", initial_value=cfg.INITIAL_Q_VAL)
+        SAPair(env.topic, "f1", initial_value=cfg.INITIAL_Q_VALUE)
     ]
     env.hearer.lexicon.q_table = [
-        SAPair("not topic", "f1", initial_value=cfg.INITIAL_Q_VAL)
+        SAPair("not topic", "f1", initial_value=cfg.INITIAL_Q_VALUE)
     ]
     env.step(0)
 
@@ -136,25 +135,25 @@ def test_step_no_invention_no_adoption_no_success(environment_and_cfg):
 
     assert env.speaker.lexicon.q_table[0].meaning == env.topic
     assert env.speaker.lexicon.q_table[0].form == "f1"
-    assert env.speaker.lexicon.q_table[0].q_val == 0.4
+    assert env.speaker.lexicon.q_table[0].q_value == 0.4
 
     assert len(env.hearer.lexicon) == 2
     assert env.hearer.lexicon.q_table[0].meaning == "not topic"
     assert env.hearer.lexicon.q_table[0].form == "f1"
-    assert env.hearer.lexicon.q_table[0].q_val == 0.4
+    assert env.hearer.lexicon.q_table[0].q_value == 0.4
 
     assert env.hearer.lexicon.q_table[1].meaning == env.topic
     assert env.hearer.lexicon.q_table[1].form == "f1"
-    assert env.hearer.lexicon.q_table[1].q_val == 0.5
+    assert env.hearer.lexicon.q_table[1].q_value == 0.5
 
 
 def test_step_no_invention_no_adoption_success(environment_and_cfg):
     env, cfg = environment_and_cfg
     env.speaker.lexicon.q_table = [
-        SAPair(env.topic, "f1", initial_value=cfg.INITIAL_Q_VAL)
+        SAPair(env.topic, "f1", initial_value=cfg.INITIAL_Q_VALUE)
     ]
     env.hearer.lexicon.q_table = [
-        SAPair(env.topic, "f1", initial_value=cfg.INITIAL_Q_VAL)
+        SAPair(env.topic, "f1", initial_value=cfg.INITIAL_Q_VALUE)
     ]
     env.step(0)
 
@@ -165,18 +164,18 @@ def test_step_no_invention_no_adoption_success(environment_and_cfg):
 
     assert env.speaker.lexicon.q_table[0].meaning == env.topic
     assert env.speaker.lexicon.q_table[0].form == "f1"
-    assert env.speaker.lexicon.q_table[0].q_val == 0.6
+    assert env.speaker.lexicon.q_table[0].q_value == 0.6
 
     assert len(env.hearer.lexicon) == 1
     assert env.hearer.lexicon.q_table[0].meaning == env.topic
     assert env.hearer.lexicon.q_table[0].form == "f1"
-    assert env.hearer.lexicon.q_table[0].q_val == 0.6
+    assert env.hearer.lexicon.q_table[0].q_value == 0.6
 
 
 def test_step_no_coherence_success(environment_and_cfg):
     env, cfg = environment_and_cfg
     env.speaker.lexicon.q_table = [
-        SAPair(env.topic, "f1", initial_value=cfg.INITIAL_Q_VAL)
+        SAPair(env.topic, "f1", initial_value=cfg.INITIAL_Q_VALUE)
     ]
     env.hearer.lexicon.q_table = [
         SAPair(env.topic, "f1", initial_value=0.5),
@@ -192,22 +191,22 @@ def test_step_no_coherence_success(environment_and_cfg):
     assert len(env.speaker.lexicon) == 1
     assert env.speaker.lexicon.q_table[0].meaning == env.topic
     assert env.speaker.lexicon.q_table[0].form == "f1"
-    assert env.speaker.lexicon.q_table[0].q_val == 0.6
+    assert env.speaker.lexicon.q_table[0].q_value == 0.6
 
     assert len(env.hearer.lexicon) == 2
     assert env.hearer.lexicon.q_table[0].meaning == env.topic
     assert env.hearer.lexicon.q_table[0].form == "f1"
-    assert env.hearer.lexicon.q_table[0].q_val == 0.6
+    assert env.hearer.lexicon.q_table[0].q_value == 0.6
 
     assert env.hearer.lexicon.q_table[1].meaning == env.topic
     assert env.hearer.lexicon.q_table[1].form == "f2"
-    assert env.hearer.lexicon.q_table[1].q_val == 0.9
+    assert env.hearer.lexicon.q_table[1].q_value == 0.9
 
 
 def test_step_sa_pair_zero_score(environment_and_cfg):
     env, cfg = environment_and_cfg
     env.speaker.lexicon.q_table = [
-        SAPair(env.topic, "f1", initial_value=cfg.INITIAL_Q_VAL)
+        SAPair(env.topic, "f1", initial_value=cfg.INITIAL_Q_VALUE)
     ]
     env.hearer.lexicon.q_table = [
         SAPair("not topic", "f1", initial_value=0.1),
@@ -221,23 +220,23 @@ def test_step_sa_pair_zero_score(environment_and_cfg):
 
     assert env.speaker.lexicon.q_table[0].meaning == env.topic
     assert env.speaker.lexicon.q_table[0].form == "f1"
-    assert env.speaker.lexicon.q_table[0].q_val == 0.4
+    assert env.speaker.lexicon.q_table[0].q_value == 0.4
 
     assert len(env.hearer.lexicon) == 2
     assert env.hearer.lexicon.q_table[0].meaning == "not topic"
     assert env.hearer.lexicon.q_table[0].form == "f1"
-    assert env.hearer.lexicon.q_table[0].q_val == 0
+    assert env.hearer.lexicon.q_table[0].q_value == 0
 
     assert env.hearer.lexicon.q_table[1].meaning == env.topic
     assert env.hearer.lexicon.q_table[1].form == "f1"
-    assert env.hearer.lexicon.q_table[1].q_val == 0.5
+    assert env.hearer.lexicon.q_table[1].q_value == 0.5
 
 
 def test_step_sa_pair_deletion(environment_and_cfg):
     env, cfg = environment_and_cfg
     env.hearer.cfg.DELETE_SA_PAIR = True
     env.speaker.lexicon.q_table = [
-        SAPair(env.topic, "f1", initial_value=cfg.INITIAL_Q_VAL)
+        SAPair(env.topic, "f1", initial_value=cfg.INITIAL_Q_VALUE)
     ]
     env.hearer.lexicon.q_table = [
         SAPair("not topic", "f1", initial_value=0.1),
@@ -251,13 +250,13 @@ def test_step_sa_pair_deletion(environment_and_cfg):
 
     assert env.speaker.lexicon.q_table[0].meaning == env.topic
     assert env.speaker.lexicon.q_table[0].form == "f1"
-    assert env.speaker.lexicon.q_table[0].q_val == 0.4
+    assert env.speaker.lexicon.q_table[0].q_value == 0.4
 
     assert len(env.hearer.lexicon) == 1
 
     assert env.hearer.lexicon.q_table[0].meaning == env.topic
     assert env.hearer.lexicon.q_table[0].form == "f1"
-    assert env.hearer.lexicon.q_table[0].q_val == 0.5
+    assert env.hearer.lexicon.q_table[0].q_value == 0.5
 
 
 def test_step_both_roles_delete(environment_and_cfg):
@@ -279,19 +278,19 @@ def test_step_both_roles_delete(environment_and_cfg):
     assert len(env.hearer.lexicon) == 1
     assert env.hearer.lexicon.q_table[0].meaning == env.topic
     assert env.hearer.lexicon.q_table[0].form == "f1"
-    assert env.hearer.lexicon.q_table[0].q_val == 0.5
+    assert env.hearer.lexicon.q_table[0].q_value == 0.5
 
 
 def test_step_lateral_inhibition_speaker(environment_and_cfg):
     env, cfg = environment_and_cfg
     env.speaker.lexicon.q_table = [
-        SAPair(env.topic, "f1", initial_value=cfg.INITIAL_Q_VAL),
-        SAPair(env.topic, "f2", initial_value=cfg.INITIAL_Q_VAL),
-        SAPair(env.topic, "f3", initial_value=cfg.INITIAL_Q_VAL),
-        SAPair("not topic", "f1", initial_value=cfg.INITIAL_Q_VAL),
+        SAPair(env.topic, "f1", initial_value=cfg.INITIAL_Q_VALUE),
+        SAPair(env.topic, "f2", initial_value=cfg.INITIAL_Q_VALUE),
+        SAPair(env.topic, "f3", initial_value=cfg.INITIAL_Q_VALUE),
+        SAPair("not topic", "f1", initial_value=cfg.INITIAL_Q_VALUE),
     ]
     env.hearer.lexicon.q_table = [
-        SAPair(env.topic, "f1", initial_value=cfg.INITIAL_Q_VAL)
+        SAPair(env.topic, "f1", initial_value=cfg.INITIAL_Q_VALUE)
     ]
     env.step(0)
 
@@ -301,27 +300,27 @@ def test_step_lateral_inhibition_speaker(environment_and_cfg):
     assert env.hearer.communicative_success is True
 
     assert len(env.speaker.lexicon) == 4
-    assert env.speaker.lexicon.q_table[0].q_val == 0.6
-    assert env.speaker.lexicon.q_table[1].q_val == 0.4
-    assert env.speaker.lexicon.q_table[2].q_val == 0.4
-    assert env.speaker.lexicon.q_table[3].q_val == 0.5
+    assert env.speaker.lexicon.q_table[0].q_value == 0.6
+    assert env.speaker.lexicon.q_table[1].q_value == 0.4
+    assert env.speaker.lexicon.q_table[2].q_value == 0.4
+    assert env.speaker.lexicon.q_table[3].q_value == 0.5
 
     assert len(env.hearer.lexicon) == 1
     assert env.hearer.lexicon.q_table[0].meaning == env.topic
     assert env.hearer.lexicon.q_table[0].form == "f1"
-    assert env.hearer.lexicon.q_table[0].q_val == 0.6
+    assert env.hearer.lexicon.q_table[0].q_value == 0.6
 
 
 def test_step_lateral_inhibition_hearer(environment_and_cfg):
     env, cfg = environment_and_cfg
     env.speaker.lexicon.q_table = [
-        SAPair(env.topic, "f1", initial_value=cfg.INITIAL_Q_VAL),
+        SAPair(env.topic, "f1", initial_value=cfg.INITIAL_Q_VALUE),
     ]
     env.hearer.lexicon.q_table = [
-        SAPair(env.topic, "f1", initial_value=cfg.INITIAL_Q_VAL),
-        SAPair(env.topic, "f2", initial_value=cfg.INITIAL_Q_VAL),
-        SAPair(env.topic, "f3", initial_value=cfg.INITIAL_Q_VAL),
-        SAPair("not topic", "f1", initial_value=cfg.INITIAL_Q_VAL),
+        SAPair(env.topic, "f1", initial_value=cfg.INITIAL_Q_VALUE),
+        SAPair(env.topic, "f2", initial_value=cfg.INITIAL_Q_VALUE),
+        SAPair(env.topic, "f3", initial_value=cfg.INITIAL_Q_VALUE),
+        SAPair("not topic", "f1", initial_value=cfg.INITIAL_Q_VALUE),
     ]
     env.step(0)
 
@@ -331,26 +330,26 @@ def test_step_lateral_inhibition_hearer(environment_and_cfg):
     assert env.hearer.communicative_success is True
 
     assert len(env.speaker.lexicon) == 1
-    assert env.speaker.lexicon.q_table[0].q_val == 0.6
+    assert env.speaker.lexicon.q_table[0].q_value == 0.6
 
     assert len(env.hearer.lexicon) == 4
-    assert env.hearer.lexicon.q_table[0].q_val == 0.6
-    assert env.hearer.lexicon.q_table[1].q_val == 0.4
-    assert env.hearer.lexicon.q_table[2].q_val == 0.4
-    assert env.hearer.lexicon.q_table[3].q_val == 0.5
+    assert env.hearer.lexicon.q_table[0].q_value == 0.6
+    assert env.hearer.lexicon.q_table[1].q_value == 0.4
+    assert env.hearer.lexicon.q_table[2].q_value == 0.4
+    assert env.hearer.lexicon.q_table[3].q_value == 0.5
 
 
 def test_step_disable_lateral_inhibition(environment_and_cfg):
     env, cfg = environment_and_cfg
     env.speaker.cfg.LATERAL_INHIBITION = False
     env.speaker.lexicon.q_table = [
-        SAPair(env.topic, "f1", initial_value=cfg.INITIAL_Q_VAL),
-        SAPair(env.topic, "f2", initial_value=cfg.INITIAL_Q_VAL),
-        SAPair(env.topic, "f3", initial_value=cfg.INITIAL_Q_VAL),
-        SAPair("not topic", "f1", initial_value=cfg.INITIAL_Q_VAL),
+        SAPair(env.topic, "f1", initial_value=cfg.INITIAL_Q_VALUE),
+        SAPair(env.topic, "f2", initial_value=cfg.INITIAL_Q_VALUE),
+        SAPair(env.topic, "f3", initial_value=cfg.INITIAL_Q_VALUE),
+        SAPair("not topic", "f1", initial_value=cfg.INITIAL_Q_VALUE),
     ]
     env.hearer.lexicon.q_table = [
-        SAPair(env.topic, "f1", initial_value=cfg.INITIAL_Q_VAL)
+        SAPair(env.topic, "f1", initial_value=cfg.INITIAL_Q_VALUE)
     ]
     env.step(0)
 
@@ -360,7 +359,7 @@ def test_step_disable_lateral_inhibition(environment_and_cfg):
     assert env.hearer.communicative_success is True
 
     assert len(env.speaker.lexicon) == 4
-    assert env.speaker.lexicon.q_table[0].q_val == 0.6
-    assert env.speaker.lexicon.q_table[1].q_val == 0.5
-    assert env.speaker.lexicon.q_table[2].q_val == 0.5
-    assert env.speaker.lexicon.q_table[3].q_val == 0.5
+    assert env.speaker.lexicon.q_table[0].q_value == 0.6
+    assert env.speaker.lexicon.q_table[1].q_value == 0.5
+    assert env.speaker.lexicon.q_table[2].q_value == 0.5
+    assert env.speaker.lexicon.q_table[3].q_value == 0.5

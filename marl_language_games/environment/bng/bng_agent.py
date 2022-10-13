@@ -12,7 +12,7 @@ HEARER = "HEARER"
 class Agent:
     def __init__(self, cfg):
         self.cfg = cfg
-        self.id = make_id("AG")
+        self.id = make_id("AGENT")
         self.lexicon = Lexicon(self.cfg)
 
     def reset(self, context):
@@ -34,7 +34,7 @@ class Agent:
         """
         p = np.random.random()
         if p < (1 - eps):
-            return max(actions, key=lambda sa_pair: sa_pair.q_val)
+            return max(actions, key=lambda sa_pair: sa_pair.q_value)
         else:
             return random.sample(actions, k=1)[0]
 
@@ -87,7 +87,7 @@ class Agent:
         self.applied_sa_pair = best_action
         return best_action.form, invented
 
-    def produce_as_hearer(self, state):
+    def re_entrance_hearer(self, state):
         """Returns an utterance given the state of the environment as hearer.
 
         The state of the environment corresponds to a row in the q-table of the agent.
@@ -141,13 +141,13 @@ class Agent:
         """Updates the Q-value of a given state-action pair using the specified update rule.
 
         Note: make sure cfg.UPDATE_RULE also matches up with the specific init values for:
-            cfg.INITIAL_Q_VAL
+            cfg.INITIAL_Q_VALUE
             cfg.REWARD_SUCCESS
             cfg.REWARD_FAILURE
 
         For example, for the basic strategy:
             cfg.UPDATE_RULE: basic
-            cfg.INITIAL_Q_VAL: 0.5
+            cfg.INITIAL_Q_VALUE: 0.5
             cfg.REWARD_SUCCESS: 0.1 (~ delta_inc = 0.1)
             cfg.REWARD_FAILURE: -0.1 (~ delta_dec = 0.1)
 
@@ -176,23 +176,23 @@ class Agent:
 
     def update_basic(self, sa_pair, delta):
         """Updates the q-value of the given state/action pair using the basic update rule."""
-        old_q = sa_pair.q_val
+        old_q = sa_pair.q_value
         new_q = old_q + delta
         if new_q >= 1:
             new_q = 1
         elif new_q <= 0:
             new_q = 0
 
-        sa_pair.q_val = new_q
-        if sa_pair.q_val <= 0:
+        sa_pair.q_value = new_q
+        if sa_pair.q_value <= 0:
             self.remove_sa_pair(sa_pair)
 
     def update_q(self, sa_pair, reward):
         """Updates the q-value of the given state/action pair using the interpolated update rule."""
-        old_q = sa_pair.q_val
+        old_q = sa_pair.q_value
         new_q = old_q + self.cfg.LEARNING_RATE * (reward - old_q)
-        sa_pair.q_val = new_q
-        if sa_pair.q_val < self.cfg.REWARD_FAILURE + self.cfg.EPSILON_FAILURE:
+        sa_pair.q_value = new_q
+        if sa_pair.q_value < self.cfg.REWARD_FAILURE + self.cfg.EPSILON_FAILURE:
             self.remove_sa_pair(sa_pair)
 
     def lateral_inhibition(self):

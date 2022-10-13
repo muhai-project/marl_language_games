@@ -82,7 +82,7 @@ def exp():
     cfg.CONTEXT_MIN_SIZE = 5
     cfg.CONTEXT_MAX_SIZE = 8
     cfg.EPS_GREEDY = 0
-    cfg.INITIAL_Q_VAL = 0.5
+    cfg.INITIAL_Q_VALUE = 0.5
     cfg.REWARD_SUCCESS = 0.1
     cfg.REWARD_FAILURE = -0.1
     cfg.EPSILON_FAILURE = 0.01
@@ -128,7 +128,7 @@ def test_keep_value_basic():
     cfg.POPULATION_SIZE = 10
     cfg.CONTEXT_MIN_SIZE = 5
     cfg.CONTEXT_MAX_SIZE = 8
-    cfg.INITIAL_Q_VAL = 0.5
+    cfg.INITIAL_Q_VALUE = 0.5
     cfg.REWARD_SUCCESS = 0.1
     cfg.REWARD_FAILURE = -0.1
     cfg.EPSILON_FAILURE = 0.01
@@ -151,7 +151,7 @@ def test_keep_value_int():
     cfg.POPULATION_SIZE = 10
     cfg.CONTEXT_MIN_SIZE = 5
     cfg.CONTEXT_MAX_SIZE = 8
-    cfg.INITIAL_Q_VAL = 0
+    cfg.INITIAL_Q_VALUE = 0
     cfg.REWARD_SUCCESS = 1
     cfg.REWARD_FAILURE = -1
     cfg.EPSILON_FAILURE = 0.01

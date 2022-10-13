@@ -18,7 +18,7 @@ class Logger(object):
             level=mode,
         )
 
-        self.root = logging.getLogger()
+        self.root = logging.getLogger("marl_language_games")
         self.root.setLevel(mode)
 
         self.handler = logging.StreamHandler(sys.stdout)
@@ -33,7 +33,7 @@ class Logger(object):
         self.root.handlers.clear()
 
 
-def create_logdir(path):
+def create_logdir():
     """Creates a new unique directory for an experiment, returns the path of this newly create folder.
 
     Args:
@@ -43,7 +43,7 @@ def create_logdir(path):
         str: path of the new directory
     """
     now = str(datetime.datetime.now(dateutil.tz.tzlocal())).replace(" ", "_")
-    logdir = os.path.join(path, now)
+    logdir = os.path.join("data", now)
     os.makedirs(logdir, exist_ok=True)
     return logdir
 
@@ -73,8 +73,8 @@ def log_experiment(args, cfg_file, cfg, logdir):
     logging.info(f" this experiment uses cfg file: {cfg_file}")
     logging.info(pformat(cfg))  # log loaded cfg
 
-    # copy emrl codebase
-    code_dir_name = "emrl"
+    # copy marl_language_games codebase
+    code_dir_name = "marl_language_games"
     code_dir = os.path.join(os.getcwd(), code_dir_name)
     shutil.copytree(
         code_dir,
@@ -82,7 +82,7 @@ def log_experiment(args, cfg_file, cfg, logdir):
         ignore=shutil.ignore_patterns("*.pyc", "tmp*"),
     )
     shutil.make_archive(
-        os.path.join(logdir, "emrl"), "zip", os.path.join(logdir, code_dir_name)
+        os.path.join(logdir, "marl_language_games"), "zip", os.path.join(logdir, code_dir_name)
     )
     shutil.rmtree(os.path.join(logdir, code_dir_name))
 

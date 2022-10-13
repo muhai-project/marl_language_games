@@ -18,10 +18,10 @@ class World:
 
     def __init__(self, world_size, amount_cats, cats_per_obj):
         """Initializes a world of objects represented by a set of categories."""
-        self.cats = [make_id("C") for i in range(amount_cats)]
+        self.cats = [make_id("CATEGORY") for i in range(amount_cats)]
         self.objs = defaultdict(list)
         for _ in range(world_size):
-            self.objs[make_id("OBJ")] = random.sample(self.cats, cats_per_obj)
+            self.objs[make_id("OBJECT")] = random.sample(self.cats, cats_per_obj)
         self.objects = list(self.objs.keys())
 
     def pick_topic(self, context):
@@ -155,7 +155,7 @@ class GuessingGameEnv:
             # hearer chooses action ifo utterance
             interpretations = self.hearer.policy(HEARER, utterance)
 
-            hearer_utterance = self.hearer.produce_as_hearer(self.topic)  # monitoring
+            hearer_utterance = self.hearer.re_entrance_hearer(self.topic)  # monitoring
             self.lexicon_coherence = hearer_utterance == utterance  # monitoring
 
             # evaluate pulls

@@ -7,7 +7,7 @@ if __name__ == "__main__":
     for cfg_file in args.cfg_file:  # multiple cfgs given
         cfg = cfg_from_file(cfg_file)
         cfg.PRINT_EVERY = args.print_every
-        logdir = create_logdir(args.log_path)
+        logdir = create_logdir()
         logger = log_experiment(args, cfg_file, cfg, logdir)
         experiment = Experiment(cfg)
         experiment.run_experiment()
