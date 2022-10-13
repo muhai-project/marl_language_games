@@ -81,6 +81,8 @@ python scripts/run_experiment.py --cfg cfg/config.yml --debug --print_every 5000
 
 Once the experiments have completed, plots can be generated for the logged experiments. The Babel library contains an extensive and powerful plot engine. The engine requires the data of the experiments to be in a particular format, therefore in `utils/convert_data.py` the logger formats the logged data into the format expected by `Babel`. The script to produce the figures of the paper can be found under [`/experiments/emergent-rl/`](https://gitlab.ai.vub.ac.be/ehai/ehai-babel/-/blob/master/experiments/emergent-rl/) in `run.lisp`.
 
+Alternatively, we also provide a way to generate the plots directly without Babel. This feature is available by calling the `plot-monitors` in `utils/plot.py` with the list of monitors.
+
 ## Unit tests
 
 This repository provides unit tests (with pytest) for the `marl_language_games` package in the `tests/` folder. The conda environment associated with the `environment.yml` installs `pytest`. The tests can be run with `pytest` in the command-line.
