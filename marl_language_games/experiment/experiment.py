@@ -2,8 +2,7 @@ import logging
 
 from tqdm import tqdm
 
-from marl_language_games.environment.bng.bng_env import BasicNamingGameEnv
-from marl_language_games.environment.gg.gg_env import GuessingGameEnv
+from marl_language_games.environment.environment import BasicNamingGameEnv
 from marl_language_games.experiment.monitors import Monitors
 
 
@@ -80,8 +79,6 @@ class Experiment:
     def select_env(self, cfg):
         if self.cfg.ENV == "bng":
             return BasicNamingGameEnv(cfg)
-        elif self.cfg.ENV == "gg":
-            return GuessingGameEnv(cfg)
         else:
             raise ValueError(f"Given environment {self.cfg.ENV} is not valid!")
 

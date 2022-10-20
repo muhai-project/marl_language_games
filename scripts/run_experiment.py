@@ -1,6 +1,7 @@
 from marl_language_games.experiment.experiment import Experiment
 from marl_language_games.utils.cfg import cfg_from_file, parse_args
 from marl_language_games.utils.log import create_logdir, log_experiment
+from marl_language_games.utils.plot import plot_monitors
 
 if __name__ == "__main__":
     args = parse_args()
@@ -12,4 +13,5 @@ if __name__ == "__main__":
         experiment = Experiment(cfg)
         experiment.run_experiment()
         experiment.monitors.write(logdir)
+        plot_monitors(experiment.monitors.monitors)
         logger.close()

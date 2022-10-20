@@ -3,7 +3,7 @@ import random
 import pytest
 from easydict import EasyDict as edict
 
-from marl_language_games.environment.bng.bng_agent import HEARER, SPEAKER, Agent
+from marl_language_games.environment.agent import HEARER, SPEAKER, Agent
 from marl_language_games.environment.lexicon import SAPair
 
 DUMMY = ""

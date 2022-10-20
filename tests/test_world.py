@@ -1,6 +1,6 @@
 import pytest
 
-from marl_language_games.environment.bng.bng_env import World
+from marl_language_games.environment.environment import World
 
 
 def test_init():
