@@ -1,6 +1,6 @@
 # Multi-agent Reinforcement Learning (MARL) Language Games
 
-This repository contains the code for 'Multi-agent Reinforcement Learning Language games'. It studies emergent communication through the multi-agent reinforcement learning framework and the language games paradigm.
+This repository accompanies the paper [Language games meet multi-agent reinforcement learning: A case study for the naming game](https://academic.oup.com/jole/article/7/2/213/7128304#410601591). It studies emergent communication through the multi-agent reinforcement learning framework and the language games paradigm.
 
 ## Project Organization
 
@@ -82,3 +82,22 @@ Alternatively, we also provide a way to generate the plots directly without Babe
 ## Unit tests
 
 This repository provides unit tests (with pytest) for the `marl_language_games` package in the `tests/` folder. The conda environment associated with the `environment.yml` installs `pytest`. The tests can be run with `pytest` in the command-line.
+
+## Citation
+
+```
+@article{vaneecke2022language,
+    title = {Language games meet multi-agent reinforcement learning: A case study for the naming game},
+    author = {{Van Eecke}, Paul and Beuls, Katrien and {Botoko Ekila}, J\'{e}r\^{o}me and R{\u{a}}dulescu, Roxana},
+    year = {2022},
+    journal = {Journal of Language Evolution},
+    volume = {7},
+    number = {2},
+    pages = {213--223},
+    doi = {10.1093/jole/lzad001},
+}
+```
+
+## Acknowledgements
+
+The research reported on in this paper was financed by the Research Foundation Flanders (FWO - Vlaanderen) through postdoctoral grants awarded to Paul Van Eecke (75929) and Roxana Rădulescu (1286223N), and by the European Union’s Horizon 2020 research and innovation programme under grant agreement no. 951846 (MUHAI - https://www.muhai.org).
